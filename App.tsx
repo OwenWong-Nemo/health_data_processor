@@ -16,7 +16,7 @@ import {
   useColorScheme,
   View,
   PanResponder,
-  Dimensions, Button, Alert
+  Dimensions, Button, Alert, Image
 } from 'react-native';
 //import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RadioButton } from 'react-native-paper';
@@ -102,7 +102,7 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
+        <Image source={require('./order.jpg')} />
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
