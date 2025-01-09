@@ -1,23 +1,43 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-//import { CheckBox, Icon } from '@rneui/themed';
-/*
-type CheckboxComponentProps = {};
+//import CheckBox from '@react-native-community/checkbox';
 
-const CheckboxComponent: React.FunctionComponent<CheckboxComponentProps> = () => {
-const [check1, setCheck1] = useState(false);
+const initialState = {
+  checked: false,
+};
+function CheckboxI() {
+  const [state, setState] = React.useState(initialState);
+  const [toggleButton, setToggleButton] = React.useState(false);
 
-return (
+  return (
+    <View style={styles.container}>
+      <View>
+        <View style={styles.checkboxWrapper}>
+          <CheckBox
+            value={state.checked}
+            onValueChange={value => setState({ checked: value })}
+          />
+          <Text>Check this option</Text>
+        </View>
+        {/* <Button
+          onPress={() => setToggleButton(prevToggleButton => !prevToggleButton)}
+          title="Save"
+        /> */}
+      </View>
+      {toggleButton && (
+        <View style={styles.resultContainer}>
+          {state.checked && (
+            <View style={{ paddingHorizontal: 5 }}>
+              <Text>Checked</Text>
+            </View>
+          )}
+        </View>
+      )}
+    </View>
+  );
+}
 
-    <CheckBox
-      center
-      title="Click Here"
-      checked={check1}
-      onPress={() => setCheck1(!check1)}
-    />
-);};
-*/
 
   const data = [
     { label: 'Admiralty', value: '1' },
@@ -45,7 +65,7 @@ return (
     };
 
     return (
-      <View style={styles.container}>
+      <View style={styles.dropdownContainer}>
         {renderLabel()}
         <Dropdown
           style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -72,9 +92,72 @@ return (
     );
   };
 
-//export { DropdownComponent, CheckboxComponent };
-export default DropdownComponent;
+//export { DropdownComponent, Checkbox }
+ export default DropdownComponent;
 
+const styles = StyleSheet.create({
+  textInput: {
+    borderColor: 'gray',
+    borderWidth: 1,
+  },
+  resultContainer: {
+    flexDirection: 'row',
+    padding: 10,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  checkboxWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+  },
+
+  dropdownContainer: {
+    backgroundColor: 'white',
+    padding: 16,
+    width: '100%',
+    height: 100,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+});
+
+/*
   const styles = StyleSheet.create({
     container: {
       backgroundColor: 'white',
@@ -117,3 +200,4 @@ export default DropdownComponent;
     },
   })
   ;
+*/

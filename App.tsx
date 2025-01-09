@@ -20,8 +20,9 @@ import {
 } from 'react-native';
 //import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RadioButton } from 'react-native-paper';
-//import  {DropdownComponent, CheckboxComponent}  from './Dropdown';
+//import  {DropdownComponent, Checkbox}  from './Dropdown';
 import DropdownComponent from './Dropdown';
+import CheckBox from '@react-native-community/checkbox';
 //import AntDesign from '@expo/vector-icons/AntDesign'; //dependency issue
 
 import {
@@ -31,7 +32,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { CheckBox } from '@rneui/base';
+//import { CheckBox } from '@rneui/base';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -85,13 +86,13 @@ function App(): React.JSX.Element {
       setBarPosition(newPosition);
     },
   });
-  let percentage = Math.round((barPosition / (screenWidth-50)) * 100);
+  let percentage = Math.round((barPosition / (screenWidth-50)) * 50)+50;
 
   //radio button: grind size 
   const [grindValue, setGrindValue] = useState('small');
   //radio button: cup size
   const [cupValue, setCupValue] = useState('small');
-
+  const [toggleCheckBox, setToggleCheckBox] = useState(false); 
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -111,7 +112,7 @@ function App(): React.JSX.Element {
             <View style={styles.barContainer}>
               <View style={[styles.bar, { left: barPosition }]} {...panResponder.panHandlers} />
             </View>
-            <Text>Temperature: {percentage}%</Text>
+            <Text>Temperature: {percentage} degrees</Text>
           </Section>
           
           <Section title="Grind size">
@@ -207,10 +208,19 @@ function App(): React.JSX.Element {
           {<DropdownComponent />}
       </Section>
         </View>
+        {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}> */}
+        <View style={styles.checkboxContainer}>
+      <CheckBox
+        disabled={false}
+        value={toggleCheckBox}
+        onValueChange={(newValue) => setToggleCheckBox(newValue)}
+      />
+      <Text>{toggleCheckBox ? 'Checked' : 'Share with community'}</Text>
+    </View>
         <View style={styles.buttonContainer}>
         <Button
           title="Purchase"
-          onPress={() => Alert.alert('Simple Button pressed')}
+          onPress={() => Alert.alert('Purchased')}
           color="#007BFF"
         />
         </View>
@@ -289,9 +299,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
 },
+//checkbox container
+checkboxContainer: {
+  margin: 30,
+  //alignItems: 'center',
+  color: 'green',
+  paddingTop: 0,
+  paddingBottom: 0,
+},
+
 //button
   buttonContainer: {
-    margin: 50,
+    margin: 30,
     //alignItems: 'center',
     color: 'green',
     paddingTop: 0,
