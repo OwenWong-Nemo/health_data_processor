@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "react": "18.3.1",
-    "react-native": "0.76.5"
+    "react-native": "0.76.5",
+    "react-native-element-dropdown": "^2.12.2",
+    "react-native-paper": "^5.12.5",
+    "react-native-safe-area-context": "^5.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
