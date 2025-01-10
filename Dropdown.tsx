@@ -1,42 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-//import CheckBox from '@react-native-community/checkbox';
-
-const initialState = {
-  checked: false,
-};
-function CheckboxI() {
-  const [state, setState] = React.useState(initialState);
-  const [toggleButton, setToggleButton] = React.useState(false);
-
-  return (
-    <View style={styles.container}>
-      <View>
-        <View style={styles.checkboxWrapper}>
-          <CheckBox
-            value={state.checked}
-            onValueChange={value => setState({ checked: value })}
-          />
-          <Text>Check this option</Text>
-        </View>
-        {/* <Button
-          onPress={() => setToggleButton(prevToggleButton => !prevToggleButton)}
-          title="Save"
-        /> */}
-      </View>
-      {toggleButton && (
-        <View style={styles.resultContainer}>
-          {state.checked && (
-            <View style={{ paddingHorizontal: 5 }}>
-              <Text>Checked</Text>
-            </View>
-          )}
-        </View>
-      )}
-    </View>
-  );
-}
 
 
   const data = [

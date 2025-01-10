@@ -18,13 +18,11 @@ import {
   PanResponder,
   Dimensions, Button, Alert, Image
 } from 'react-native';
-//import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 import { RadioButton, Checkbox } from 'react-native-paper';
-//import CBox from './Checkbox_app';
-//import  {DropdownComponent, Checkbox}  from './Dropdown';
+
 import DropdownComponent from './Dropdown';
-//import CheckBox from '@react-native-community/checkbox';
-//import AntDesign from '@expo/vector-icons/AntDesign'; //dependency issue
+
 
 import {
   Colors,
@@ -93,7 +91,7 @@ function App(): React.JSX.Element {
   const [grindValue, setGrindValue] = useState('small');
   //radio button: cup size
   const [cupValue, setCupValue] = useState('small');
-  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  //const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [checked, setChecked] = React.useState(false);
  
 
@@ -219,21 +217,10 @@ function App(): React.JSX.Element {
             }
           }
            color='blue'
-           
           />
-          
-          <Text>{checked ? 'Checked' : 'Share with community'}</Text>
+          <Text>{checked ? 'Share with community' : 'Share with community'}</Text>
         </View>
-    {/* </View> */}
-        {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}> */}
-        {/* <View style={styles.checkboxContainer}>
-      <CheckBox
-        disabled={false}
-        value={toggleCheckBox}
-        onValueChange={(newValue) => setToggleCheckBox(newValue)}
-      />
-      <Text>{toggleCheckBox ? 'Checked' : 'Share with community'}</Text> */}
-    {/* </View> */}
+
         <View style={styles.buttonContainer}>
         <Button
           title="Purchase"
@@ -318,11 +305,13 @@ const styles = StyleSheet.create({
 },
 //checkbox container
 checkboxContainer: {
-  margin: 30,
+  //margin: 30,
   //alignItems: 'center',
   color: 'green',
   paddingTop: 0,
   paddingBottom: 0,
+  flexDirection: 'row',
+  alignItems: 'center',
 },
 
 //button
