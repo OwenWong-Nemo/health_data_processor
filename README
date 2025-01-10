@@ -1,0 +1,30 @@
+# Reference: https://medium.com/internet-of-technology/how-to-extract-and-analyze-apple-health-data-a-practical-python-guide-4b9ddbade37f
+
+Selected Metric:
+    HKQuantityTypeIdentifierBodyMass
+    HKQuantityTypeIdentifierAppleExerciseTime
+    HKQuantityTypeIdentifierHeartRate
+    HKQuantityTypeIdentifierStepCount
+    HKQuantityTypeIdentifierRestingHeartRate
+
+Calculate/record the following for each metric:
+    type
+    Latest record
+    Latest 10 records
+    Standard deviation
+    Below?above average
+
+Evaluate mood factors:
+    Sleep duration
+    Exercise time
+    Heart rate
+    Step count
+    Resting heart rate
+
+Coffee customisation:
+    Coffee type
+    Caffeine Level
+    Strength (as in taste)
+    Vitamin add-on
+    Sugar level
+    temperature
