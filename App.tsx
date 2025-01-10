@@ -19,10 +19,11 @@ import {
   Dimensions, Button, Alert, Image
 } from 'react-native';
 //import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { RadioButton } from 'react-native-paper';
+import { RadioButton, Checkbox } from 'react-native-paper';
+//import CBox from './Checkbox_app';
 //import  {DropdownComponent, Checkbox}  from './Dropdown';
 import DropdownComponent from './Dropdown';
-import CheckBox from '@react-native-community/checkbox';
+//import CheckBox from '@react-native-community/checkbox';
 //import AntDesign from '@expo/vector-icons/AntDesign'; //dependency issue
 
 import {
@@ -92,7 +93,9 @@ function App(): React.JSX.Element {
   const [grindValue, setGrindValue] = useState('small');
   //radio button: cup size
   const [cupValue, setCupValue] = useState('small');
-  const [toggleCheckBox, setToggleCheckBox] = useState(false); 
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [checked, setChecked] = React.useState(false);
+ 
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -114,7 +117,6 @@ function App(): React.JSX.Element {
             </View>
             <Text>Temperature: {percentage} degrees</Text>
           </Section>
-          
           <Section title="Grind size">
             <View style={styles.radioContainer}>
             <View style={styles.radioGroup}>
@@ -208,15 +210,30 @@ function App(): React.JSX.Element {
           {<DropdownComponent />}
       </Section>
         </View>
-        {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}> */}
+        {/* <View style={styles.checkboxContainer}> */}
         <View style={styles.checkboxContainer}>
+          <Checkbox
+            status={checked ? 'checked' : 'unchecked'}
+            onPress={() => {
+              setChecked(!checked);
+            }
+          }
+           color='blue'
+           
+          />
+          
+          <Text>{checked ? 'Checked' : 'Share with community'}</Text>
+        </View>
+    {/* </View> */}
+        {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}> */}
+        {/* <View style={styles.checkboxContainer}>
       <CheckBox
         disabled={false}
         value={toggleCheckBox}
         onValueChange={(newValue) => setToggleCheckBox(newValue)}
       />
-      <Text>{toggleCheckBox ? 'Checked' : 'Share with community'}</Text>
-    </View>
+      <Text>{toggleCheckBox ? 'Checked' : 'Share with community'}</Text> */}
+    {/* </View> */}
         <View style={styles.buttonContainer}>
         <Button
           title="Purchase"
