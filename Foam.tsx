@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
-  StatusBar,
+  TextInput,
   StyleSheet,
   Text,
   useColorScheme,
@@ -16,6 +16,28 @@ import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 import { RadioButton } from 'react-native-paper';
+import DocumentPicker from 'react-native-document-picker';
+
+const uploadFileOnPressHandler = async () => {
+  try {
+    const pickedFile = await DocumentPicker.pickSingle({
+      type: [DocumentPicker.types.allFiles],
+    });
+    console.log('pickedFile', pickedFile);
+    
+    // You can add any frontend effects here without reading the file
+    // For example, you might want to show a success message or update the UI
+    //Alert(`File picked: ${pickedFile.name}`);
+    
+  } catch (err) {
+    if (DocumentPicker.isCancel(err)) {
+      console.log('User cancelled the picker', err);
+    } else {
+      console.log('Error picking file', err);
+      throw err;
+    }
+  }
+};
 
 function FoamScreen() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -35,7 +57,9 @@ function FoamScreen() {
       default:
         return null;
     }
-  }
+  };
+
+
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -88,8 +112,19 @@ function FoamScreen() {
   );
 }
 
-const ComponentA = () => <Text>This is Component A</Text>;
-const ComponentB = () => <Text>This is Component B</Text>;
+const ComponentA = () => <Button title="Gallary" onPress={async () => {
+  uploadFileOnPressHandler();
+}} />;
+const ComponentB = () => {
+  const [text, onChangeText] = React.useState('');
+  return (<TextInput
+          style={styles.input}
+          onChangeText={onChangeText}
+          value={text}
+          placeholder='What should the foam be?'
+        />)
+
+}
 const ComponentC = () => <Text>This is Component C</Text>;
 
 const styles =StyleSheet.create({
@@ -124,6 +159,13 @@ const styles =StyleSheet.create({
     marginLeft: 8,
     fontSize: 16,
     color: '#333',
+},
+input: {
+  height: 40,
+  width: '75%',
+  margin: 12,
+  borderWidth: 1,
+  padding: 10,
 },
 });
 
