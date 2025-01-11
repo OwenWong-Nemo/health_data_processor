@@ -20,6 +20,8 @@ import {
 } from 'react-native';
 
 import { RadioButton, Checkbox } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
 
 import DropdownComponent from './Dropdown';
 
@@ -91,8 +93,10 @@ function Order(): React.JSX.Element {
   const [grindValue, setGrindValue] = useState('small');
   //radio button: cup size
   const [cupValue, setCupValue] = useState('small');
-  //const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  //checkbox
   const [checked, setChecked] = React.useState(false);
+  //foam 
+  const navigation = useNavigation();
  
 
   return (
@@ -204,6 +208,17 @@ function Order(): React.JSX.Element {
             </View>
         </View>
           </Section>
+            {/* <Section title="Foam"> */}
+            <View style={styles.checkboxContainer}>
+              <Text style={styles.sectionTitle}>Foam</Text>
+              <Icon.Button
+              onPress={() => navigation.navigate('Foam')}
+              name="arrow-right"
+              backgroundColor="transparent"
+              color="#007BFF"
+              />
+            </View>
+            {/* </Section> */}
           <Section title="Pick up location">
           {<DropdownComponent />}
       </Section>
