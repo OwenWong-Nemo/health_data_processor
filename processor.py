@@ -1,53 +1,89 @@
-import statistics
 import xml.etree.ElementTree as ET
 
-PATH_TO_YOUR_FILE = "/Users/owenwong/Desktop/health_data_processor/health_data_sample/export.xml"
+# Filter non-determinant types data
 
-xml_path = PATH_TO_YOUR_FILE
-tree = ET.parse(xml_path)
-root = tree.getroot()
+# File paths
+raw_xml = "/Users/owenwong/Desktop/health_data_processor/health_data_sample/export.xml"
+processed_xml = "/Users/owenwong/Desktop/health_data_processor/filtered.xml"
 
-types = [
+options = [
     "HKQuantityTypeIdentifierBodyMass",
-    # "HKCategoryTypeIdentifierSleepAnalysis", # Unable to retrieve
+    "HKCategoryTypeIdentifierSleepAnalysis",
     "HKQuantityTypeIdentifierAppleExerciseTime",
     "HKQuantityTypeIdentifierHeartRate",
     "HKQuantityTypeIdentifierStepCount",
     "HKQuantityTypeIdentifierRestingHeartRate"
 ]
 
-data = []
+isDiscreteType = [
+    "HKCategoryTypeIdentifierSleepAnalysis",
+    "HKQuantityTypeIdentifierAppleExerciseTime"
+]
+
+def filterData(input_xml_path, output_xml_path, types):
+    # Load the original XML data
+    tree = ET.parse(input_xml_path)
+    root = tree.getroot()
+
+    # Create a new XML element for storing filtered records
+    new_root = ET.Element("HealthData")
+
+    # Iterate over the specified types and filter records
+    for type in types:
+        query = f".//Record[@type='{type}']"
+        for record in root.findall(query):
+            new_root.append(record)
+
+    # Create a new tree from the filtered root and write to output XML file
+    new_tree = ET.ElementTree(new_root)
+    new_tree.write(output_xml_path)
+
+    print(f"Processed data has been initialized and written to: {output_xml_path}")
+
+# (Optional) Comment it out if original file "export.xml" has not been modified
+# filterData(raw_xml, processed_xml, options)
+
+# Processing filtered/specified data
+xml_path = processed_xml
+tree = ET.parse(xml_path)
+root = tree.getroot()
+
 metrics = []
 
+# Limitation: Unable to parse "HKCategoryTypeIdentifierSleepAnalysis"
 def formMetric(type: str, records: list):
     type = type.removeprefix("HKQuantityTypeIdentifier")
     
-    if len(records) < 10:
-        metric = {
-            'sufficient_dataSet': 0,
-            'type': type,
-            'latest_rec': 'N.A',
-            'avr':  'N.A', 
-            'stdev': 'N.A',
-            'diff': 'N.A'
-        }
+    if len(records) < 0:
+        print("0 record found.")
     else: 
-        dataSet = records[-10:]
+        dataSet = records
         # 'records': list of dict, extract values
         values = [float(record['value']) for record in records]
         avr = sum(values) / len(values)
 
+        latest_rec = {
+            'creationDate': records[-1].get('creationDate'),
+            'value': records[-1].get('value'),
+            'unit': records[-1].get('unit')
+        }
+
         metric = {
-            'sufficient_dataSet': 1,
             'type': type,
-            'latest_rec': records[-1],
+            'latest_rec': latest_rec,
             'avr':  avr, 
-            'stdev': statistics.stdev(values),
-            'diff': values[-1] - avr # latest record - averages
+            'diff': values[-1] - avr
         }
     return metric
-    
-for type in types:
+
+def parseDiscreteData(type: str, records: list):
+    type = type.removeprefix("HKQuantityTypeIdentifier")
+
+
+
+
+
+for type in options:
     records = []
     query = ".//Record[@type='" + type  + "']"
 
@@ -55,8 +91,7 @@ for type in types:
     # sampleQry = ".//Record[@type='HKCategoryTypeIdentifierSleepAnalysis']"
     # for record in root.findall(sampleQry):
 
-    for record in root.findall(query): # Comment this out when testing
-        # Mainly for debug
+    for record in root.findall(query):
         records.append({
             # More options available: 
             'creationDate': record.get('creationDate'),
@@ -66,19 +101,18 @@ for type in types:
             'value': record.get('value'),
             'unit': record.get('unit')
         })
-    metric = formMetric(type, records)
+
+    if type not in isDiscreteType:
+        metric = formMetric(type, records)
+    elif type in isDiscreteType:
+        # TODO
+        print("TODO")
+    else:
+        metric = "N.A. Please check data source file."
+
     metrics.append(metric)
-
-# Hard code data
-hardCodeData = {
-    # In hours
-    'sufficient_dataSet': 1,
-    'type': "SleepDuration",
-    'latest_rec': 5,
-    'avr':  7.5, 
-    'stdev': 0,
-    'diff': 2.5 
-}
-
+ 
 for metric in metrics:
     print(metric)
+
+

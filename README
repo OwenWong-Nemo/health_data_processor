@@ -1,7 +1,9 @@
 # Reference: https://medium.com/internet-of-technology/how-to-extract-and-analyze-apple-health-data-a-practical-python-guide-4b9ddbade37f
+Credit to: https://www.jonbusby.co.uk/2021/06/analysing-apple-health-data-in-python-part-1-extraction-and-sleep-data/
 
 Selected Metric:
     HKQuantityTypeIdentifierBodyMass
+    HKCategoryTypeIdentifierSleepAnalysis
     HKQuantityTypeIdentifierAppleExerciseTime
     HKQuantityTypeIdentifierHeartRate
     HKQuantityTypeIdentifierStepCount
@@ -28,3 +30,4 @@ Coffee customisation:
     Vitamin add-on
     Sugar level
     temperature
+
