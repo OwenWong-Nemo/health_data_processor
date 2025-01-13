@@ -10,6 +10,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button } from '@react-navigation/elements';
 import Order from './Order';
 import FoamScreen from './Foam';
+import { useSelection, SelectionProvider  } from './SelectionContext';
 
 function HomeScreen() {
     const navigation = useNavigation();
@@ -43,5 +44,8 @@ const RootStack = createNativeStackNavigator({
 const Navigation = createStaticNavigation(RootStack);
 
 export default function App() {
-  return <Navigation />;
+  return (<SelectionProvider> 
+    {/* //this is for selection of foam pattern */}
+  <Navigation />
+  </SelectionProvider>);
 }

@@ -1,6 +1,7 @@
 
 
 import React, { useState } from 'react';
+import { useSelection, SelectionProvider  } from './SelectionContext';
 import {
   SafeAreaView,
   ScrollView,
@@ -17,6 +18,8 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import { RadioButton } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
+
+import DropdownFoam from './Dropdown_foam';
 
 const uploadFileOnPressHandler = async () => {
   try {
@@ -58,10 +61,59 @@ function FoamScreen() {
         return null;
     }
   };
+  //display foam pattern selection
+  const { selection, setSelection } = useSelection();
+  const renderPattern = () => {
+    if (selection === '1'){
+      return (
+        <Image
+          style={{
+            width: 200,
+            height: 200,
+          }}
+          source={require('./foam_img/cat.jpg')}
+        />
+      );
+    }
+    else if (selection === '2'){
+      return (
+        <Image
+          style={{
+            width: 200,
+            height: 200,
+          }}
+          source={require('./foam_img/bear.jpg')}
+        />
+      );
+    }
+    else if (selection === '3'){
+      return (
+        <Image
+          style={{
+            width: 200,
+            height: 200,
+          }}
+          source={require('./foam_img/panda.jpg')}
+        />
+      );
+    }
+    else {
+      return (
+        <Image
+          style={{
+            width: 200,
+            height: 200,
+          }}
+          source={require('./foam_img/none.png')}
+        />
+      );
+    }
+  };
 
 
 
   return (
+
     <SafeAreaView style={backgroundStyle}>
       <ScrollView>
         <View style={styles.radioContainer}>
@@ -106,28 +158,43 @@ function FoamScreen() {
     </View><View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         {/* <Text>Foam Screen</Text> */}
         {renderComponent()}
+        {renderPattern()}
       </View>
+       <Button
+                title="Clear"
+                onPress={() => setSelection(null)}
+                color="#007BFF"
+              />
       </ScrollView>
       </SafeAreaView>
+      
   );
 }
 
-const ComponentA = () => <Button title="Gallary" onPress={async () => {
+const ComponentA = () => <Button title="Gallery" onPress={async () => {
   uploadFileOnPressHandler();
 }} />;
 const ComponentB = () => {
   const [text, onChangeText] = React.useState('');
-  return (<TextInput
-          style={styles.input}
-          onChangeText={onChangeText}
-          value={text}
-          placeholder='What should the foam be?'
-        />)
+  return (<View style={{ width: '85%' }}><TextInput
+    style={styles.input}
+    onChangeText={onChangeText}
+    value={text}
+    placeholder="What should the foam be?" /><Button
+      title="Generate"
+      color="#007BFF" /></View>
+      
+      )
 
 }
-const ComponentC = () => <Text>This is Component C</Text>;
+const ComponentC = () =>{ 
+return (
+<DropdownFoam/>
+)
 
-const styles =StyleSheet.create({
+}
+
+const styles = StyleSheet.create({
   radioContainer: {
     flex: 1,
     backgroundColor: '#F5F5F5',

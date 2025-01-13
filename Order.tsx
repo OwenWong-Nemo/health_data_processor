@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import type {PropsWithChildren} from 'react';
+import { useSelection  } from './SelectionContext';
 import {
   SafeAreaView,
   ScrollView,
@@ -97,6 +98,12 @@ function Order(): React.JSX.Element {
   const [checked, setChecked] = React.useState(false);
   //foam 
   const navigation = useNavigation();
+  const { selection } = useSelection(); // Access shared state
+
+  let price = 59; //base price
+  if (cupValue === 'medium') price += 3;
+  else if (cupValue === 'big') price += 6;
+  if (selection != null) price += 10;
  
 
   return (
@@ -235,7 +242,7 @@ function Order(): React.JSX.Element {
           />
           <Text>{checked ? 'Share with community' : 'Share with community'}</Text>
         </View>
-
+        <Text style={styles.sectionTitle}>Price: ${price}</Text>
         <View style={styles.buttonContainer}>
         <Button
           title="Purchase"
