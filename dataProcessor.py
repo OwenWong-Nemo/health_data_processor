@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
+# import requests
 
 # Filter non-determinant types data
 
@@ -151,8 +152,8 @@ for type in options:
     metrics.append(metric)
 
 # Test functionality
-# for metric in metrics:
-#     print(metric)
+for metric in metrics:
+    print(metric)
 
 # Analyse data
 
@@ -186,12 +187,12 @@ def determine_mood_and_coffee(data):
     sugar_level = 'Low' if mood == 'Positive' else 'Medium' if mood == 'Neutral' else 'High'
 
     return {
-        'Mood': mood,
         'Coffee Type': coffee_type,
         'Caffeine Level': caffeine_level,
-        'Sugar Level': sugar_level
+        'Sugar Level': sugar_level,
+        'Additive': "protein, iron, omega-3"
     }
 
 # Correct the data format and function call if needed
 result = determine_mood_and_coffee(data)
-print("Determined Mood and Coffee Recommendation:", result)
+print("Coffee Recommendation:", result)
