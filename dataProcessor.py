@@ -8,12 +8,11 @@ raw_xml = "/Users/owenwong/Desktop/health_data_processor/health_data_sample/expo
 processed_xml = "/Users/owenwong/Desktop/health_data_processor/filtered.xml"
 
 options = [
-    "HKQuantityTypeIdentifierBodyMass",
-    "HKCategoryTypeIdentifierSleepAnalysis",
     "HKQuantityTypeIdentifierAppleExerciseTime",
-    "HKQuantityTypeIdentifierHeartRate",
-    "HKQuantityTypeIdentifierStepCount",
-    "HKQuantityTypeIdentifierRestingHeartRate"
+    "HKQuantityTypeIdentifierBodyMass",
+    "HKQuantityTypeIdentifierRestingHeartRate",
+    "HKCategoryTypeIdentifierSleepAnalysis",
+    "HKQuantityTypeIdentifierStepCount"
 ]
 
 isDiscreteType = [
@@ -66,9 +65,10 @@ def formMetric(type: str, records: list):
     else: 
         values = [float(record['value']) for record in records]
         avr = sum(values) / len(values)
+        diff = values[-1] - avr
 
         latest_rec = {
-            'creationDate': records[-1].get('creationDate'),
+            # 'creationDate': records[-1].get('creationDate'), # Optional
             'value': records[-1].get('value'),
             'unit': records[-1].get('unit')
         }
@@ -77,7 +77,8 @@ def formMetric(type: str, records: list):
             'type': type,
             'latest_rec': latest_rec,
             'avr':  avr, 
-            'diff': values[-1] - avr
+            'diff': diff,
+            'diff %': diff/avr * 100
         }
     return metric
 
@@ -118,7 +119,6 @@ def parseDiscreteData(type, records: list):
         "unit": "hours"
     })
     return { "type": type, "records": sleepRec}
-
                 
 for type in options:
     records = []
@@ -143,7 +143,7 @@ for type in options:
         metric = formMetric(type, records)
     elif type in isDiscreteType:
         data = parseDiscreteData(type, records)
-        print(data.get("type"))
+        # print(data.get("type")) 
         metric = formMetric(data.get("type"), data.get("records"))
     else:
         print("Invalid data.")
@@ -153,3 +153,45 @@ for type in options:
 # Test functionality
 # for metric in metrics:
 #     print(metric)
+
+# Analyse data
+
+# Ideally the metrics will be passed to a tuned LLM
+def get_mood_score_change(diff_percent):
+    if diff_percent > 30:
+        return 2
+    elif diff_percent > 15:
+        return 1
+    elif diff_percent > -15:
+        return 0
+    elif diff_percent > -30:
+        return -1
+    else:
+        return -2
+
+def determine_mood_and_coffee(data):
+    mood_score = 0
+
+    # Correctly access each metric's 'diff %'
+    for metric in data:
+        if 'diff %' in metric:
+            mood_score += get_mood_score_change(metric['diff %'])
+
+    # Determine mood from the mood score
+    mood = 'Positive' if mood_score > 1 else 'Neutral' if mood_score > -1 else 'Negative'
+
+    # Simple logic to choose coffee type based on mood, could be expanded
+    coffee_type = 'Latte' if mood == 'Positive' else 'Cappuccino' if mood == 'Neutral' else 'Mocha'
+    caffeine_level = 'High' if mood == 'Positive' else 'Medium' if mood == 'Neutral' else 'Low'
+    sugar_level = 'Low' if mood == 'Positive' else 'Medium' if mood == 'Neutral' else 'High'
+
+    return {
+        'Mood': mood,
+        'Coffee Type': coffee_type,
+        'Caffeine Level': caffeine_level,
+        'Sugar Level': sugar_level
+    }
+
+# Correct the data format and function call if needed
+result = determine_mood_and_coffee(data)
+print("Determined Mood and Coffee Recommendation:", result)
