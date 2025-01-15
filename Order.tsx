@@ -115,11 +115,28 @@ function Order(): React.JSX.Element {
   //foam 
   const navigation = useNavigation();
   const { selection } = useSelection(); // for foam pattern 
+  //nutrient
+  const [checkedNutrient, setCheckedNutrient] = useState({
+    item1: false,
+    item2: false,
+    item3: false,
+  });
+  const toggleNutrient = (item) => {
+    setCheckedNutrient(prevState => ({
+        ...prevState,
+        [item]: !prevState[item],
+    }));
+};
 
-  let price = 59; //base price
+
+
+  let price = 35; //base price
   if (cupValue === 'medium') price += 3;
   else if (cupValue === 'big') price += 6;
   if (selection != null) price += 10;
+  for (const key in checkedNutrient) {
+    if (checkedNutrient[key]) price += 1;
+  }
  
 
   return (
@@ -196,6 +213,50 @@ function Order(): React.JSX.Element {
             </View>
             <Text>Sugar level: {percentage} %</Text>
           </Section>
+          
+          <Section title="Nutrient">
+          <View style={styles.radioContainer}>
+          <View style={styles.radioGroup}>
+          {/* nutrient1 */}
+          <View style={styles.checkboxContainer}>
+          <Checkbox
+            status={checkedNutrient.item1 ? 'checked' : 'unchecked'}
+            onPress={() => {
+              toggleNutrient('item1');
+            }
+          }
+           color='blue'
+          />
+          <Text>V1</Text>
+          </View>
+          {/* nutrient2 */}
+          <View style={styles.checkboxContainer}>
+          <Checkbox
+            status={checkedNutrient.item2 ? 'checked' : 'unchecked'}
+            onPress={() => {
+              toggleNutrient('item2');
+            }
+          }
+           color='blue'
+          />
+          <Text> V2</Text>
+          </View>
+          {/* nutrient3 */}
+          <View style={styles.checkboxContainer}>
+          <Checkbox
+            status={checkedNutrient.item3 ? 'checked' : 'unchecked'}
+            onPress={() => {
+              toggleNutrient('item3');
+            }
+          }
+           color='blue'
+          />
+          <Text> V3</Text>
+          </View>
+
+            </View>
+            </View>
+            </Section>
 
           <Section title="Cup size">
             <View style={styles.radioContainer}>
