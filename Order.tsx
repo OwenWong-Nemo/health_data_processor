@@ -66,6 +66,8 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
+
+
 function Order(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -109,18 +111,21 @@ function Order(): React.JSX.Element {
   //radio button: grind size 
   const [grindValue, setGrindValue] = useState('small');
   //radio button: cup size
-  const [cupValue, setCupValue] = useState('small');
+  //const [cupValue, setCupValue] = useState('small');
+  const {cupValue, setCupValue} = useSelection();
   //checkbox
   const [checked, setChecked] = React.useState(false);
   //foam 
   const navigation = useNavigation();
   const { selection } = useSelection(); // for foam pattern 
   //nutrient
-  const [checkedNutrient, setCheckedNutrient] = useState({
-    item1: false,
-    item2: false,
-    item3: false,
-  });
+  // const [checkedNutrient, setCheckedNutrient] = useState({
+  //   item1: false,
+  //   item2: false,
+  //   item3: false,
+  //   item4: false,
+  // });
+  const {checkedNutrient, setCheckedNutrient} = useSelection();
   const toggleNutrient = (item) => {
     setCheckedNutrient(prevState => ({
         ...prevState,
@@ -130,15 +135,27 @@ function Order(): React.JSX.Element {
 const {coffee_bean_type}= useSelection();//for bean type
 
 
+const setNutrient = () => {
+  setCheckedNutrient({
+    item1: false,
+    item2: true,
+    item3: true,
+    item4: false,
+  });
+}
 
-  let price = 35; //base price
+
+
+  let price = 29; //base price
   if (cupValue === 'medium') price += 3;
-  else if (cupValue === 'big') price += 6;
+  else if (cupValue === 'large') price += 6;
+  else if (cupValue === 'XL') price += 9;
   if (selection != null) price += 10;
   for (const key in checkedNutrient) {
     if (checkedNutrient[key]) price += 1;
   }
-  if ((coffee_bean_type==='1')||(coffee_bean_type==='3')) price += 5;
+  if (coffee_bean_type==='1') price += 3;
+  else if (coffee_bean_type==='3') price += 7;
  
 
   return (
@@ -258,6 +275,18 @@ const {coffee_bean_type}= useSelection();//for bean type
           <Text> V3</Text>
           </View>
 
+          <View style={styles.checkboxContainer}>
+          <Checkbox
+            status={checkedNutrient.item4 ? 'checked' : 'unchecked'}
+            onPress={() => {
+              toggleNutrient('item4');
+            }
+          }
+           color='blue'
+          />
+          <Text>V4</Text>
+          </View>
+
             </View>
             </View>
             </Section>
@@ -293,14 +322,26 @@ const {coffee_bean_type}= useSelection();//for bean type
 
                 <View style={styles.radioButton}>
                     <RadioButton.Android
-                        value="big"
-                        status={cupValue === 'big' ? 
+                        value="large"
+                        status={cupValue === 'large' ? 
                                 'checked' : 'unchecked'}
-                        onPress={() => setCupValue('big')}
+                        onPress={() => setCupValue('large')}
                         color="#007BFF"
                     />
                     <Text style={styles.radioLabel}>
-                        Big
+                        Large
+                    </Text>
+                </View>
+                <View style={styles.radioButton}>
+                    <RadioButton.Android
+                        value="XL"
+                        status={cupValue === 'XL' ? 
+                                'checked' : 'unchecked'}
+                        onPress={() => setCupValue('XL')}
+                        color="#007BFF"
+                    />
+                    <Text style={styles.radioLabel}>
+                        XL
                     </Text>
                 </View>
 
