@@ -127,6 +127,7 @@ function Order(): React.JSX.Element {
         [item]: !prevState[item],
     }));
 };
+const {coffee_bean_type}= useSelection();//for bean type
 
 
 
@@ -137,6 +138,7 @@ function Order(): React.JSX.Element {
   for (const key in checkedNutrient) {
     if (checkedNutrient[key]) price += 1;
   }
+  if ((coffee_bean_type==='1')||(coffee_bean_type==='3')) price += 5;
  
 
   return (
@@ -158,6 +160,7 @@ function Order(): React.JSX.Element {
               <View style={[styles.bar, { left: barPosition }]} {...panResponder.panHandlers} />
             </View>
             <Text>Temperature: {temperature} degrees</Text>
+            
           </Section>
           
           <Section title="Grind size">
@@ -206,6 +209,7 @@ function Order(): React.JSX.Element {
           </Section>
           <Section title="Coffee bean type">
             <BeanDropdown />
+
           </Section>
           <Section title="Sugar">
             <View style={styles.barContainer}>

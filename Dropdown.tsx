@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import { useSelection, SelectionProvider  } from './SelectionContext';
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/FontAwesome5'; 
 
@@ -68,10 +69,11 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
   const BeanDropdown = () => {
     const [value, setValue] = useState<string | null>(null);
+    const { coffee_bean_type, setBean } = useSelection();
     const [isFocus, setIsFocus] = useState(false);
 
     const renderLabel = () => {
-      if (value || isFocus) {
+      if (coffee_bean_type || isFocus) {
         return (
           <Text style={[styles.label, isFocus && { color: 'blue' }]}>
             Coffee bean type
@@ -112,15 +114,16 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
           valueField="value"
           placeholder={!isFocus ? 'Select bean type' : '...'}
           searchPlaceholder="Search..."
-          value={value}
+          value={coffee_bean_type}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            setValue(item.value);
+            setBean(item.value);
             setIsFocus(false);
           }}
           renderItem={renderItem}
         />
+
       </View>
     );
   };
