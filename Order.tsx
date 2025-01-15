@@ -135,17 +135,6 @@ function Order(): React.JSX.Element {
 const {coffee_bean_type}= useSelection();//for bean type
 
 
-const setNutrient = () => {
-  setCheckedNutrient({
-    item1: false,
-    item2: true,
-    item3: true,
-    item4: false,
-  });
-}
-
-
-
   let price = 29; //base price
   if (cupValue === 'medium') price += 3;
   else if (cupValue === 'large') price += 6;
