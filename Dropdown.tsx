@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
+import Icon from 'react-native-vector-icons/FontAwesome5'; 
 
 
   const data = [
@@ -11,6 +12,14 @@ import { Dropdown } from 'react-native-element-dropdown';
       { label: 'Tsuen Wan', value: '5' },
       { label: 'Tsim Sha Tsui', value: '6' },
       { label: 'Yau Tong', value: '7' },
+  ];
+
+  const coffee_bean = [
+    { label: 'Arabica', value: '1' , icon: 'crown'},
+      { label: 'Robusta', value: '2', icon: null},
+      { label: 'Liberica', value: '3' ,icon: 'crown'},
+      { label: 'Excelsa', value: '4' , icon: null},
+ 
   ];
 
   const DropdownComponent = () => {
@@ -56,8 +65,68 @@ import { Dropdown } from 'react-native-element-dropdown';
     );
   };
 
-//export { DropdownComponent, Checkbox }
- export default DropdownComponent;
+
+  const BeanDropdown = () => {
+    const [value, setValue] = useState<string | null>(null);
+    const [isFocus, setIsFocus] = useState(false);
+
+    const renderLabel = () => {
+      if (value || isFocus) {
+        return (
+          <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+            Coffee bean type
+          </Text>
+        );
+      }
+      return null;
+    };
+
+    const renderItem = (item) => { //for the options in BeanDropdown
+      if (item.icon != null) {
+      return (
+          <View style={styles.itemContainer}>
+              <Text>{item.label}</Text>
+              <Icon name={item.icon} size={20} color="#000" style={styles.icon} />
+          </View>
+      );}
+      return (
+        <View style={styles.itemContainer}>
+            <Text>{item.label}</Text>
+        </View>)
+  };
+
+
+    return (
+      <View style={styles.dropdownContainer}>
+        {renderLabel()}
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={coffee_bean}
+          search
+          maxHeight={200}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select bean type' : '...'}
+          searchPlaceholder="Search..."
+          value={value}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setValue(item.value);
+            setIsFocus(false);
+          }}
+          renderItem={renderItem}
+        />
+      </View>
+    );
+  };
+
+export { DropdownComponent, BeanDropdown }
+ //export default DropdownComponent;
 
 const styles = StyleSheet.create({
   textInput: {
@@ -74,11 +143,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  checkboxWrapper: {
+  itemContainer: { //for the options in BeanDropdown
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 5,
-  },
+    padding: 10,
+},
 
   dropdownContainer: {
     backgroundColor: 'white',

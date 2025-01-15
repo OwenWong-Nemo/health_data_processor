@@ -24,7 +24,7 @@ import { RadioButton, Checkbox } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 
-import DropdownComponent from './Dropdown';
+import {DropdownComponent, BeanDropdown} from './Dropdown';
 
 
 import {
@@ -74,8 +74,8 @@ function Order(): React.JSX.Element {
   };
 
   //slidable : brew temp
-  const [barPosition, setBarPosition] = useState<number>(0);
   const screenWidth = Dimensions.get('window').width;
+  const [barPosition, setBarPosition] = useState<number>( (screenWidth-50)*0.6); //default 80 deg
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -88,7 +88,23 @@ function Order(): React.JSX.Element {
       setBarPosition(newPosition);
     },
   });
-  let percentage = Math.round((barPosition / (screenWidth-50)) * 50)+50;
+  let temperature = Math.round((barPosition / (screenWidth-50)) * 50)+50;
+
+  //for sugar level 
+  const [sugarPosition, setsugarPosition] = useState<number>(0); 
+  const sugarResponder = PanResponder.create({
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderMove: (evt, gestureState) => {
+      let newPosition = gestureState.moveX;
+
+      // Ensure the bar stays within screen bounds
+      if (newPosition < 0) newPosition = 0;
+      if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
+
+      setsugarPosition(newPosition);
+    },
+  });
+  let percentage = Math.round((sugarPosition / (screenWidth-50)) * 100);
 
   //radio button: grind size 
   const [grindValue, setGrindValue] = useState('small');
@@ -98,7 +114,7 @@ function Order(): React.JSX.Element {
   const [checked, setChecked] = React.useState(false);
   //foam 
   const navigation = useNavigation();
-  const { selection } = useSelection(); // Access shared state
+  const { selection } = useSelection(); // for foam pattern 
 
   let price = 59; //base price
   if (cupValue === 'medium') price += 3;
@@ -124,8 +140,9 @@ function Order(): React.JSX.Element {
             <View style={styles.barContainer}>
               <View style={[styles.bar, { left: barPosition }]} {...panResponder.panHandlers} />
             </View>
-            <Text>Temperature: {percentage} degrees</Text>
+            <Text>Temperature: {temperature} degrees</Text>
           </Section>
+          
           <Section title="Grind size">
             <View style={styles.radioContainer}>
             <View style={styles.radioGroup}>
@@ -170,6 +187,16 @@ function Order(): React.JSX.Element {
             </View>
         </View>
           </Section>
+          <Section title="Coffee bean type">
+            <BeanDropdown />
+          </Section>
+          <Section title="Sugar">
+            <View style={styles.barContainer}>
+              <View style={[styles.bar, { left: sugarPosition }]} {...sugarResponder.panHandlers} />
+            </View>
+            <Text>Sugar level: {percentage} %</Text>
+          </Section>
+
           <Section title="Cup size">
             <View style={styles.radioContainer}>
             <View style={styles.radioGroup}>
