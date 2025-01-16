@@ -15,7 +15,7 @@ import { useSelection, SelectionProvider  } from './SelectionContext';
 function HomeScreen() {
     const navigation = useNavigation();
     const {setSelection, setCupValue, setBean, setCheckedNutrient} = useSelection();
-    const makeOrder=(coffee_bean:string, foam_pattern:string, cup_size:string, nutrient:{[key: string]: boolean })=>{
+    const makeOrder=(coffee_bean:string|null, foam_pattern:string|null, cup_size:string|null, nutrient:{[key: string]: boolean })=>{
         setCupValue(cup_size);
         setBean(coffee_bean);
         setSelection(foam_pattern);
@@ -28,14 +28,35 @@ function HomeScreen() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
-      <Button onPress={() => navigation.navigate('Order')}>
+      <Button onPress={() => {
+        makeOrder(null, null, null, {'item1': false, 'item2': false, 'item3': false, 'item4': false});
+        navigation.navigate('Order')}}>
         Place order
       </Button>
+      <Text>Quick Options</Text>
       <Button onPress={() => {
-        makeOrder('1', '1', 'medium', {'item1': true, 'item2': false, 'item3': true, 'item4': false});
+        makeOrder('2', null, 'small', {'item1': false, 'item2': false, 'item3': false, 'item4': false});
         navigation.navigate('Order');
       }}>
-        Order1 
+        Order1
+      </Button>
+      <Button onPress={() => {
+        makeOrder('1', null, 'medium', {'item1': true, 'item2': true, 'item3': true, 'item4': true});
+        navigation.navigate('Order');
+      }}>
+        Order2
+      </Button>
+      <Button onPress={() => {
+        makeOrder('2', '2', 'large', {'item1': false, 'item2': false, 'item3': false, 'item4': false});
+        navigation.navigate('Order');
+      }}>
+        Order3
+      </Button>
+      <Button onPress={() => {
+        makeOrder('3', '2', 'XL', {'item1': true, 'item2': true, 'item3': true, 'item4': true});
+        navigation.navigate('Order');
+      }}>
+        Order4
       </Button>
     </View>
   );
