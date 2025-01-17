@@ -15,17 +15,7 @@ function PredictScreen() {
     const {setSelection, setCupValue, 
         setBean, setCheckedNutrient, 
     setBrewTemperature, 
-    setSugarLevel} = useSelection();
-    const makeOrder=(coffee_bean:string|null, foam_pattern:string|null, cup_size:string|null, nutrient:{[key: string]: boolean })=>{
-        setCupValue(cup_size);
-        setBean(coffee_bean);
-        setSelection(foam_pattern);
-        for (let key in nutrient) {
-            setCheckedNutrient((prev) => {
-              return { ...prev, [key]: nutrient[key] };
-            });
-          }
-    };
+    setSugarLevel, setCaffeineLevel} = useSelection();
     const [message, setMessage] = useState('');
 
 
@@ -40,6 +30,7 @@ function PredictScreen() {
       };
     setBrewTemperature(response.data.brew_temp);
     setSugarLevel(response.data.sugar_level);
+    setCaffeineLevel(response.data.caffeine_level);
 }).catch(error => {
     console.log(error);});}
 

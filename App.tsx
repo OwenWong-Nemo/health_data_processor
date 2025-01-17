@@ -16,7 +16,7 @@ import axios from 'axios';
 
 function HomeScreen() {
     const navigation = useNavigation();
-    const {setSelection, setCupValue, setBean, setCheckedNutrient} = useSelection();
+    const {setSelection, setCupValue, setBean, setCheckedNutrient, setBrewTemperature, setSugarLevel} = useSelection();
     const makeOrder=(coffee_bean:string|null, foam_pattern:string|null, cup_size:string|null, nutrient:{[key: string]: boolean })=>{
         setCupValue(cup_size);
         setBean(coffee_bean);
@@ -33,7 +33,6 @@ function HomeScreen() {
     setMessage(response.data.message);}).catch(error => {
     console.log(error);});
 
-    const {brew_temperature, setBrewTemperature} = useSelection();
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -45,6 +44,8 @@ function HomeScreen() {
       </Button>
       <Button onPress={() => {
         makeOrder(null, null, null, {'item1': false, 'item2': false, 'item3': false, 'item4': false});
+        setBrewTemperature(80);
+        setSugarLevel(0);
         navigation.navigate('Order')}}>
         Place order
       </Button>

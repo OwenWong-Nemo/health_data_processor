@@ -92,7 +92,7 @@ function Order(): React.JSX.Element {
       setBrewTemperature(Math.round((newPosition / (screenWidth-50)) * 50)+50);
     },
   });
-  //let temperature = Math.round((barPosition / (screenWidth-50)) * 50)+50;
+ 
 
   //for sugar level 
   const {sugar_level, setSugarLevel} = useSelection();
@@ -109,10 +109,24 @@ function Order(): React.JSX.Element {
       setSugarLevel(Math.round((newPosition)/(screenWidth-50)*100));
     },
   });
-  //let percentage = Math.round((sugarPosition / (screenWidth-50)) * 100);
 
-  //radio button: grind size 
-  const [grindValue, setGrindValue] = useState('small');
+  //caffeine level
+  const {caffeine_level, setCaffeineLevel} = useSelection();
+  const [caffeinePosition, setcaffeinePosition] = useState<number>(caffeine_level/100*(screenWidth-50)); 
+  const caffeineResponder = PanResponder.create({
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderMove: (evt, gestureState) => {
+      let newPosition = gestureState.moveX;
+
+      // Ensure the bar stays within screen bounds
+      if (newPosition < 0) newPosition = 0;
+      if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
+      setcaffeinePosition(newPosition);
+      setCaffeineLevel(Math.round((newPosition)/(screenWidth-50)*100));
+    },
+  });
+  
+  
   //radio button: cup size
   //const [cupValue, setCupValue] = useState('small');
   const {cupValue, setCupValue} = useSelection();
@@ -172,50 +186,7 @@ const {coffee_bean_type}= useSelection();//for bean type
             
           </Section>
           
-          <Section title="Grind size">
-            <View style={styles.radioContainer}>
-            <View style={styles.radioGroup}>
-                <View style={styles.radioButton}>
-                    <RadioButton.Android
-                        value="small"
-                        status={grindValue === 'small' ? 
-                                'checked' : 'unchecked'}
-                        onPress={() => setGrindValue('small')}
-                        color="#007BFF"
-                    />
-                    <Text style={styles.radioLabel}>
-                        Small
-                    </Text>
-                </View>
-
-                <View style={styles.radioButton}>
-                    <RadioButton.Android
-                        value="medium"
-                        status={grindValue === 'medium' ? 
-                                 'checked' : 'unchecked'}
-                        onPress={() => setGrindValue('medium')}
-                        color="#007BFF"
-                    />
-                    <Text style={styles.radioLabel}>
-                        Medium
-                    </Text>
-                </View>
-
-                <View style={styles.radioButton}>
-                    <RadioButton.Android
-                        value="big"
-                        status={grindValue === 'big' ? 
-                                'checked' : 'unchecked'}
-                        onPress={() => setGrindValue('big')}
-                        color="#007BFF"
-                    />
-                    <Text style={styles.radioLabel}>
-                        Big
-                    </Text>
-                </View>
-            </View>
-        </View>
-          </Section>
+          
           <Section title="Coffee bean type">
             <BeanDropdown />
 
@@ -225,6 +196,14 @@ const {coffee_bean_type}= useSelection();//for bean type
               <View style={[styles.bar, { left: sugarPosition }]} {...sugarResponder.panHandlers} />
             </View>
             <Text>Sugar level: {sugar_level} %</Text>
+          </Section>
+          
+
+          <Section title="Caffeine">
+            <View style={styles.barContainer}>
+              <View style={[styles.bar, { left: caffeinePosition }]} {...caffeineResponder.panHandlers} />
+            </View>
+            <Text>Caffeine level: {caffeine_level} %</Text>
           </Section>
           
           <Section title="Nutrient">
