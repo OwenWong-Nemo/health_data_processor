@@ -1,6 +1,6 @@
 // In App.js in a new project
 
-import * as React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import {
   createStaticNavigation,
@@ -10,7 +10,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button } from '@react-navigation/elements';
 import Order from './Order';
 import FoamScreen from './Foam';
+import PredictScreen from './Predict';
 import { useSelection, SelectionProvider  } from './SelectionContext';
+import axios from 'axios';
 
 function HomeScreen() {
     const navigation = useNavigation();
@@ -25,9 +27,20 @@ function HomeScreen() {
             });
           }
     };
+    const [message, setMessage] = useState('');
+
+    axios.get('http://10.0.2.2:8000/api/getOrder/').then(response => { //not localhost
+    setMessage(response.data.message);}).catch(error => {
+    console.log(error);});
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>{message}</Text>
       <Text>Home Screen</Text>
+      <Button onPress={() => {
+        navigation.navigate('Predict')}}>
+        Get Prediction
+      </Button>
       <Button onPress={() => {
         makeOrder(null, null, null, {'item1': false, 'item2': false, 'item3': false, 'item4': false});
         navigation.navigate('Order')}}>
@@ -76,6 +89,7 @@ const RootStack = createNativeStackNavigator({
       },
     Order: Order,
     Foam: FoamScreen,
+    Predict: PredictScreen,
   },
 });
 
