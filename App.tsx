@@ -33,6 +33,8 @@ function HomeScreen() {
     setMessage(response.data.message);}).catch(error => {
     console.log(error);});
 
+    const {brew_temperature, setBrewTemperature} = useSelection();
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>{message}</Text>

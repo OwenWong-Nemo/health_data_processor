@@ -76,8 +76,9 @@ function Order(): React.JSX.Element {
   };
 
   //slidable : brew temp
+  const {brew_temperature, setBrewTemperature} = useSelection();
   const screenWidth = Dimensions.get('window').width;
-  const [barPosition, setBarPosition] = useState<number>( (screenWidth-50)*0.6); //default 80 deg
+  const [barPosition, setBarPosition] = useState<number>( (screenWidth-50)*((brew_temperature-50)/50)); //default 80 deg
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -88,12 +89,14 @@ function Order(): React.JSX.Element {
       if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
 
       setBarPosition(newPosition);
+      setBrewTemperature(Math.round((newPosition / (screenWidth-50)) * 50)+50);
     },
   });
-  let temperature = Math.round((barPosition / (screenWidth-50)) * 50)+50;
+  //let temperature = Math.round((barPosition / (screenWidth-50)) * 50)+50;
 
   //for sugar level 
-  const [sugarPosition, setsugarPosition] = useState<number>(0); 
+  const {sugar_level, setSugarLevel} = useSelection();
+  const [sugarPosition, setsugarPosition] = useState<number>(sugar_level/100*(screenWidth-50)); 
   const sugarResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -102,11 +105,11 @@ function Order(): React.JSX.Element {
       // Ensure the bar stays within screen bounds
       if (newPosition < 0) newPosition = 0;
       if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
-
       setsugarPosition(newPosition);
+      setSugarLevel(Math.round((newPosition)/(screenWidth-50)*100));
     },
   });
-  let percentage = Math.round((sugarPosition / (screenWidth-50)) * 100);
+  //let percentage = Math.round((sugarPosition / (screenWidth-50)) * 100);
 
   //radio button: grind size 
   const [grindValue, setGrindValue] = useState('small');
@@ -165,7 +168,7 @@ const {coffee_bean_type}= useSelection();//for bean type
             <View style={styles.barContainer}>
               <View style={[styles.bar, { left: barPosition }]} {...panResponder.panHandlers} />
             </View>
-            <Text>Temperature: {temperature} degrees</Text>
+            <Text>Temperature: {brew_temperature} degrees</Text>
             
           </Section>
           
@@ -221,7 +224,7 @@ const {coffee_bean_type}= useSelection();//for bean type
             <View style={styles.barContainer}>
               <View style={[styles.bar, { left: sugarPosition }]} {...sugarResponder.panHandlers} />
             </View>
-            <Text>Sugar level: {percentage} %</Text>
+            <Text>Sugar level: {sugar_level} %</Text>
           </Section>
           
           <Section title="Nutrient">

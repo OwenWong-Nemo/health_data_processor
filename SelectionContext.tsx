@@ -6,12 +6,16 @@ const SelectionContext = createContext<{ selection: any; setSelection: React.Dis
   coffee_bean_type: any; setBean: React.Dispatch<React.SetStateAction<any>>; 
   cupValue:any; setCupValue: React.Dispatch<React.SetStateAction<any>>; 
   checkedNutrient: any; setCheckedNutrient: React.Dispatch<React.SetStateAction<any>>;
+  brew_temperature: any; setBrewTemperature: React.Dispatch<React.SetStateAction<any>>;
+  sugar_level: any; setSugarLevel: React.Dispatch<React.SetStateAction<any>>;
  } | undefined>(undefined);
 
 export const SelectionProvider = ({ children }) => {
   const [selection, setSelection] = useState(null); // Shared state
   const [coffee_bean_type, setBean] = useState(null); // Additional shared state
   const [cupValue, setCupValue] = useState(null); // Additional shared state
+  const [brew_temperature, setBrewTemperature] = useState(80); // Additional shared state
+  const [sugar_level, setSugarLevel] = useState(0); // Additional shared state
   const [checkedNutrient, setCheckedNutrient] = useState({
     item1: false,
     item2: false,
@@ -23,7 +27,9 @@ export const SelectionProvider = ({ children }) => {
       selection, setSelection, 
       coffee_bean_type, setBean, 
       cupValue, setCupValue, 
-      checkedNutrient, setCheckedNutrient}}>
+      checkedNutrient, setCheckedNutrient, 
+      brew_temperature, setBrewTemperature, 
+      sugar_level, setSugarLevel }}>
       {children}
     </SelectionContext.Provider>
   );

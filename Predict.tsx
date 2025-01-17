@@ -12,7 +12,10 @@ import axios from 'axios';
 
 function PredictScreen() {
     const navigation = useNavigation();
-    const {setSelection, setCupValue, setBean, setCheckedNutrient} = useSelection();
+    const {setSelection, setCupValue, 
+        setBean, setCheckedNutrient, 
+    setBrewTemperature, 
+    setSugarLevel} = useSelection();
     const makeOrder=(coffee_bean:string|null, foam_pattern:string|null, cup_size:string|null, nutrient:{[key: string]: boolean })=>{
         setCupValue(cup_size);
         setBean(coffee_bean);
@@ -35,6 +38,8 @@ function PredictScreen() {
           return { ...prev, [key]: response.data.nutrient[key] };
         });
       };
+    setBrewTemperature(response.data.brew_temp);
+    setSugarLevel(response.data.sugar_level);
 }).catch(error => {
     console.log(error);});}
 
