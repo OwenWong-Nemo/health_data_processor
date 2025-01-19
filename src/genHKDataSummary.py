@@ -1,45 +1,15 @@
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
-# import requests
 
-# Filter non-determinant types data
+# Importing functionality from other files
+from config import config
+from init import filterData
 
-# File paths
-raw_xml = "/Users/owenwong/Desktop/health_data_processor/health_data_sample/export.xml"
-processed_xml = "/Users/owenwong/Desktop/health_data_processor/filtered.xml"
-
-options = [
-    "HKQuantityTypeIdentifierAppleExerciseTime",
-    "HKQuantityTypeIdentifierBodyMass",
-    "HKQuantityTypeIdentifierRestingHeartRate",
-    "HKCategoryTypeIdentifierSleepAnalysis",
-    "HKQuantityTypeIdentifierStepCount"
-]
-
-isDiscreteType = [
-    "HKCategoryTypeIdentifierSleepAnalysis",
-    "HKQuantityTypeIdentifierAppleExerciseTime"
-]
-
-def filterData(input_xml_path, output_xml_path, types):
-    # Load the original XML data
-    tree = ET.parse(input_xml_path)
-    root = tree.getroot()
-
-    # Create a new XML element for storing filtered records
-    new_root = ET.Element("HealthData")
-
-    # Iterate over the specified types and filter records
-    for type in types:
-        query = f".//Record[@type='{type}']"
-        for record in root.findall(query):
-            new_root.append(record)
-
-    # Create a new tree from the filtered root and write to output XML file
-    new_tree = ET.ElementTree(new_root)
-    new_tree.write(output_xml_path)
-
-    print(f"Processed data has been initialized and written to: {output_xml_path}")
+# Load config, to make modification please go to config (config.py) file
+raw_xml = config["raw_xml"]
+processed_xml = config["processed_xml"]
+options = config["options"]
+isDiscreteType = config["isDiscreteType"]
 
 # (Optional) Comment it out if original file "export.xml" has not been modified
 # filterData(raw_xml, processed_xml, options)
@@ -154,45 +124,3 @@ for type in options:
 # Test functionality
 for metric in metrics:
     print(metric)
-
-# Analyse data
-
-# Ideally the metrics will be passed to a tuned LLM
-def get_mood_score_change(diff_percent):
-    if diff_percent > 30:
-        return 2
-    elif diff_percent > 15:
-        return 1
-    elif diff_percent > -15:
-        return 0
-    elif diff_percent > -30:
-        return -1
-    else:
-        return -2
-
-def determine_mood_and_coffee(data):
-    mood_score = 0
-
-    # Correctly access each metric's 'diff %'
-    for metric in data:
-        if 'diff %' in metric:
-            mood_score += get_mood_score_change(metric['diff %'])
-
-    # Determine mood from the mood score
-    mood = 'Positive' if mood_score > 1 else 'Neutral' if mood_score > -1 else 'Negative'
-
-    # Simple logic to choose coffee type based on mood, could be expanded
-    coffee_type = 'Latte' if mood == 'Positive' else 'Cappuccino' if mood == 'Neutral' else 'Mocha'
-    caffeine_level = 'High' if mood == 'Positive' else 'Medium' if mood == 'Neutral' else 'Low'
-    sugar_level = 'Low' if mood == 'Positive' else 'Medium' if mood == 'Neutral' else 'High'
-
-    return {
-        'Coffee Type': coffee_type,
-        'Caffeine Level': caffeine_level,
-        'Sugar Level': sugar_level,
-        'Additive': "protein, iron, omega-3"
-    }
-
-# Correct the data format and function call if needed
-result = determine_mood_and_coffee(data)
-print("Coffee Recommendation:", result)
