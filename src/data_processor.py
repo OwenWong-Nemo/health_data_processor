@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 
 # Importing functionality from other files
 from config import config
-from init import filterData
+from init import filterData # Optional
+from helper_fn import parseDiscreteData
 
 # Load config, to make modification please go to config (config.py) file
 raw_xml = config["raw_xml"]
@@ -21,16 +22,15 @@ root = tree.getroot()
 
 metrics = []
 
-# Limitation: Unable to parse "HKCategoryTypeIdentifierSleepAnalysis"
 def formMetric(type: str, records: list):
-
+    # Removing prefix
     if "HKQuantityTypeIdentifier" in type:
         type = type.removeprefix("HKQuantityTypeIdentifier")
     elif "HKCategoryTypeIdentifier" in type:
         type = type.removeprefix("HKCategoryTypeIdentifier")
     else:
         print("Other prefix")
-
+    
     if len(records) < 0:
         print("0 record found.")
     else: 
@@ -52,52 +52,10 @@ def formMetric(type: str, records: list):
             'diff %': diff/avr * 100
         }
     return metric
-
-# Helper function to convert date string to datetime object
-def strToDateTime(date_str):
-    return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %z")
-
-def parseDiscreteData(type, records: list):
-    if not records:
-        print("0 records found")
-        return []
-
-    sleepRec = []
-    totalAsleepTime = timedelta(0)  # Initialize as timedelta
-    date = records[0].get('creationDate')[:10]  # Get only the date part
-
-    for record in records:
-        startDate = strToDateTime(record.get('startDate'))
-        endDate = strToDateTime(record.get('endDate'))
-        current_date = record.get('creationDate')[:10]  # Get only the date part
-
-        if current_date == date:
-            totalAsleepTime += endDate - startDate
-        else:
-            sleepRec.append({
-                "creationDate": date,
-                "value": totalAsleepTime.total_seconds() / 3600,
-                "unit": "hours"
-            })
-
-            date = current_date
-            totalAsleepTime = endDate - startDate  
-
-    # Append the last day's data
-    sleepRec.append({
-        "creationDate": date,
-        "value": totalAsleepTime.total_seconds() / 3600,
-        "unit": "hours"
-    })
-    return { "type": type, "records": sleepRec}
                 
 for type in options:
     records = []
     query = ".//Record[@type='" + type  + "']"
-
-    # For testing
-    # sampleQry = ".//Record[@type='HKCategoryTypeIdentifierSleepAnalysis']"
-    # for record in root.findall(sampleQry):
 
     for record in root.findall(query):
         records.append({
