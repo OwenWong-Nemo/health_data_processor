@@ -1,19 +1,22 @@
 """
+After processing and analysing data, generate a coffee recommendation that was
+intended to be tailored to client's physical and mental needs
+"""
+
+"""
 Import dependencies
 """
 import xml.etree.ElementTree as ET
-import requests
-"""
-Importing functionality from other files
-"""
 from config import config
 from init import filterData # Optional
-from helper_fn import parseTimeSensitiveData, parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount, getMoodDesc, setTemperature, getCoffeeType
+from datetime import datetime
+from helper_fn import parseTimeSensitiveData, parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount, getMoodDesc, getWeatherData, getWeatherDataSummary, getCoffeeType, setTemperature, setSweetness, setCaffeine
 
 """
-Constants
+Constants/ hardcode variable
 """
-CURR_LOCATION = "Kowloon City"
+curr_loc = "Kowloon City"
+
 
 """
 Load config, to make modification please go to config (config.py) file
@@ -104,18 +107,45 @@ def getMetrics():
     return metrics
 
 def generateRecommendation():
-    # Get health data summary
+    # Preparation
     metrics = getMetrics()
-    # Evaluate mood
     mood_desc = getMoodDesc(estimateMood(metrics))
-    # Determine most suitable coffee type, more detail: README
     coffeeType =  getCoffeeType(mood_desc)
+    weather_data_summary = getWeatherDataSummary(getWeatherData(curr_loc))
+    curr_time = datetime.now().time()
+    
+    # For debug
+    # for metric in metrics:
+    #     print(metric)
+
+    # Init, accessing metric data
+    for metric in metrics:
+        if metric['type'] == 'AppleExerciseTime':
+            exerciseData = metric
+        elif metric['type'] == 'BodyMass':
+            bodyMassData = metric
+        elif metric['type'] == 'RestingHeartRate':
+            restingHeartRateData = metric
+        elif metric['type'] == 'SleepAnalysis':
+            sleepData = metric
+        elif metric['type'] == 'StepCount':
+            stepCountData = metric
+
+    """
+    Customising different properties
+    """
     # Customise temperature
-    temperature = setTemperature()
+    temperature = setTemperature(weather_data_summary) 
+    # Customise sweetness level
+    sweetness = setSweetness(mood_desc, bodyMassData, sleepData, stepCountData) 
+    # Customise caffeine level
+    caffeine = setCaffeine(curr_time, sleepData)
 
     coffee = {
         "coffeeType": coffeeType,
-        "temperature": temperature
+        "temperature": temperature,
+        "sweetness": sweetness,
+        "caffeine": caffeine
     }
 
     return coffee
@@ -147,4 +177,6 @@ def estimateMood(data):
 """
 Test functionality
 """
+
+
 print(generateRecommendation())

@@ -1,6 +1,10 @@
 """
 Contain parser, helper, special handler function etc
 """
+
+"""
+Dependencies
+"""
 from datetime import datetime, timedelta
 import requests
 from config import config
@@ -216,7 +220,7 @@ def getMoodDesc(score):
 """
 Get current, local weather data
 """
-def fetchWeatherData(district):
+def getWeatherData(district):
     api_url = "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en"
     curr_loc_weather = {}
     
@@ -257,11 +261,16 @@ def getWeatherDataSummary(weather_data):
     return summary
 
 """
-Determining the most suitable temperature for the coffee, according to weather data
+Determine the most suitable coffee type based on mood
 """
-def setTemperature():
+def getCoffeeType(mood_desc):
+    return mood_to_coffee_map.get(mood_desc)
+
+"""
+Determining the ideal temperature for the coffee, according to weather data
+"""
+def setTemperature(weather_data_summary):
     # Get weather data
-    weather_data_summary = getWeatherDataSummary(fetchWeatherData(curr_loc))
     isRaining = weather_data_summary['isRaining']
     temp = weather_data_summary['temperature']
     if temp >= 30:
@@ -280,15 +289,48 @@ def setTemperature():
     
     return coffee_temperature
     
+"""
+Determining the ideal sweetness level, based several data
+"""
+def setSweetness(mood_desc, bodyMassData, sleepData, stepCountData):
+    sweetness = 0
+    
+    if mood_desc in ['Negative', 'Toward Negative']:
+        sweetness += 25
+    if abs(bodyMassData['diff%']) < 3:
+        sweetness += 25
+    if sleepData['latest_rec']['value'] < 6:
+        sweetness += 25
+    if stepCountData['latest_rec']['value'] < stepCountData['avr']:
+        sweetness += 25
 
-def getCoffeeType(mood_desc):
-    return mood_to_coffee_map.get(mood_desc)
-         
+    return sweetness 
 
+"""
+Determining the ideal caffeine level
+"""
+def setCaffeine(curr_time, sleepData):
+    caffeine = 100
 
+    notEnoughSleep = sleepData['latest_rec']['value'] < 6
 
+    # Defining when a time period starts
+    morning = datetime.strptime('6:00 AM', '%I:%M %p').time()
+    noon = datetime.strptime('12:00 PM', '%I:%M %p').time()
+    afternoon = datetime.strptime('2:00 PM', '%I:%M %p').time()
+    late_afternoon = datetime.strptime('4:00 PM', '%I:%M %p').time()
 
-        
+    # Adjust caffeine level according to time
+    if morning < curr_time < noon and notEnoughSleep:
+        caffeine += 25
 
+    if noon < curr_time:
+        caffeine -= 25
 
+    if afternoon < curr_time:
+        caffeine -= 25
 
+    if late_afternoon < curr_time:
+        caffeine -= 25
+
+    return caffeine
