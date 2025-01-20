@@ -19,8 +19,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
     { label: 'Arabica', value: '1' , icon: 'crown'},
       { label: 'Robusta', value: '2', icon: null},
       { label: 'Liberica', value: '3' ,icon: 'crown'},
-      { label: 'Excelsa', value: '4' , icon: null},
- 
+
   ];
 
   const DropdownComponent = () => {
@@ -153,10 +152,10 @@ const styles = StyleSheet.create({
 },
 
   dropdownContainer: {
-    backgroundColor: 'white',
+    //backgroundColor: '5D4037',
     padding: 16,
     width: '100%',
-    height: 100,
+    height: 50,
   },
   dropdown: {
     height: 50,

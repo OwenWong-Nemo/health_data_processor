@@ -27,16 +27,16 @@ function HomeScreen() {
             });
           }
     };
-    const [message, setMessage] = useState('');
+    // const [message, setMessage] = useState('');
 
-    axios.get('http://10.0.2.2:8000/api/getOrder/').then(response => { //not localhost
-    setMessage(response.data.message);}).catch(error => {
-    console.log(error);});
+    // axios.get('http://10.0.2.2:8000/api/getOrder/').then(response => { //not localhost
+    // setMessage(response.data.message);}).catch(error => {
+    // console.log(error);});
 
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>{message}</Text>
+      {/* <Text>{message}</Text> */}
       <Text>Home Screen</Text>
       <Button onPress={() => {
         navigation.navigate('Predict')}}>
@@ -81,8 +81,11 @@ function HomeScreen() {
 const RootStack = createNativeStackNavigator({
     initialRouteName: 'Home',
     screenOptions: {
-      //headerStyle: { backgroundColor: 'tomato' },
+      headerStyle: { backgroundColor: '#4e342e' },
+      headerTintColor: '#fffde7',
+      headerTitleStyle: { fontWeight: 'bold' },
     },
+    
     screens: {
       Home: {
         screen: HomeScreen,
