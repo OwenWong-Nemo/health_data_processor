@@ -112,11 +112,16 @@ def generateRecommendation():
     mood_desc = getMoodDesc(estimateMood(metrics))
     coffeeType =  getCoffeeType(mood_desc)
     weather_data_summary = getWeatherDataSummary(getWeatherData(curr_loc))
+
+    # debug 
+    print(getWeatherData(curr_loc))
+    print(weather_data_summary) 
+
     curr_time = datetime.now().time()
     
     # For debug
-    # for metric in metrics:
-    #     print(metric)
+    for metric in metrics:
+        print(metric)
 
     # Init, accessing metric data
     for metric in metrics:
@@ -140,6 +145,7 @@ def generateRecommendation():
     sweetness = setSweetness(mood_desc, bodyMassData, sleepData, stepCountData) 
     # Customise caffeine level
     caffeine = setCaffeine(curr_time, sleepData)
+
 
     coffee = {
         "coffeeType": coffeeType,
@@ -177,6 +183,5 @@ def estimateMood(data):
 """
 Test functionality
 """
-
-
+print(getWeatherData(curr_loc)) # debug
 print(generateRecommendation())

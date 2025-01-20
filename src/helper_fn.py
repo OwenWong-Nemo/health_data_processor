@@ -229,9 +229,10 @@ def getWeatherData(district):
         response.raise_for_status()  # Raises HTTPError for bad responses
         curr_weather = response.json()
 
+        print(curr_weather)
         # Get data
         rainfall = next((record for record in curr_weather['rainfall']['data'] if record['place'] == district), None)
-        uv = curr_weather['uvindex']['data']
+        uv = curr_weather['uvindex']['data'] # Does not work at night
         temperature = next((record for record in curr_weather['temperature']['data'] if record['place'] == district), None)
 
     except requests.RequestException as error:
@@ -334,3 +335,8 @@ def setCaffeine(curr_time, sleepData):
         caffeine -= 25
 
     return caffeine
+
+"""
+Determine any vitamin to add
+"""
+
