@@ -1,28 +1,39 @@
+"""
+Import dependencies
+"""
 import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta
 
-# Importing functionality from other files
+"""
+Importing functionality from other files
+"""
 from config import config
 from init import filterData # Optional
-from helper_fn import parseDiscreteData
+from helper_fn import parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount
 
-# Load config, to make modification please go to config (config.py) file
+"""
+Load config, to make modification please go to config (config.py) file
+"""
 raw_xml = config["raw_xml"]
 processed_xml = config["processed_xml"]
 options = config["options"]
 isDiscreteType = config["isDiscreteType"]
 
-# (Optional) Comment it out if original file "export.xml" has not been modified
+"""
+Initialising data, comment it out if original file "export.xml" has not been modified
+"""
 # filterData(raw_xml, processed_xml, options)
 
-# Processing filtered/specified data
+"""
+Processed data, returning a summary of each health data which will be used for further 
+analysis 
+"""
+# Specify source file path
 xml_path = processed_xml
 tree = ET.parse(xml_path)
 root = tree.getroot()
 
-metrics = []
-
-def formMetric(type: str, records: list):
+# Return a summary of a specified HK data type
+def getSummary(type: str, records: list):
     # Removing prefix
     if "HKQuantityTypeIdentifier" in type:
         type = type.removeprefix("HKQuantityTypeIdentifier")
@@ -39,7 +50,7 @@ def formMetric(type: str, records: list):
         diff = values[-1] - avr
 
         latest_rec = {
-            # 'creationDate': records[-1].get('creationDate'), # Optional
+            'creationDate': records[-1].get('creationDate'), # Optional
             'value': records[-1].get('value'),
             'unit': records[-1].get('unit')
         }
@@ -49,78 +60,72 @@ def formMetric(type: str, records: list):
             'latest_rec': latest_rec,
             'avr':  avr, 
             'diff': diff,
-            'diff %': diff/avr * 100
+            'diff%': diff/avr * 100
         }
     return metric
-                
-for type in options:
-    records = []
-    query = ".//Record[@type='" + type  + "']"
 
-    for record in root.findall(query):
-        records.append({
-            # More options available: 
-            'creationDate': record.get('creationDate'),
-            'startDate': record.get('startDate'),
-            'endDate': record.get('endDate'),
-            'type': record.get('type'),
-            'value': record.get('value'),
-            'unit': record.get('unit')
-        })
+# Return list of summary of all wanted data
+def getMetrics():
+    # Temp storage
+    metrics = []
+    for type in options:
+        records = []
+        query = ".//Record[@type='" + type  + "']"
 
-    if type not in isDiscreteType:
-        metric = formMetric(type, records)
-    elif type in isDiscreteType:
-        data = parseDiscreteData(type, records)
-        # print(data.get("type")) 
-        metric = formMetric(data.get("type"), data.get("records"))
-    else:
-        print("Invalid data.")
+        for record in root.findall(query):
+            records.append({
+                # More options available: 
+                'creationDate': record.get('creationDate'),
+                'startDate': record.get('startDate'),
+                'endDate': record.get('endDate'),
+                'type': record.get('type'),
+                'value': record.get('value'),
+                'unit': record.get('unit')
+            })
 
-    metrics.append(metric)
+        if type not in isDiscreteType:
+            metric = getSummary(type, records)
+        elif type in isDiscreteType:
+            data = parseDiscreteData(type, records)
+            # print(data.get("type")) 
+            metric = getSummary(data.get("type"), data.get("records"))
+        else:
+            print("Invalid data.")
 
-# Test functionality
+        metrics.append(metric)
+    return metrics
+
+"""
+Analyse metrics, evaluate mood then make a recommendation that takes several 
+factors into consideration, catering to user's need
+"""
+def evaluateMood(data):
+    est_mood = 0
+    # TODO
+    for metric in data:
+        if metric["type"] == "AppleExerciseTime":
+            metric_score = evaluateAppleExerciseTime(metric)
+            est_mood += metric_score
+        elif metric["type"] == "BodyMass":
+            metric_score = evaluateBodyMass(metric)
+            est_mood += metric_score
+        elif metric["type"] == "RestingHeartRate":
+            metric_score = evaluateRestingHeartRate(metric)
+            est_mood += metric_score
+        elif metric["type"] == "SleepAnalysis":
+            metric_score = evaluateSleepAnalysis(metric)
+            est_mood += metric_score
+        elif metric["type"] == "StepCount":
+            metric_score = evaluateStepCount(metric)
+            est_mood += metric_score
+    return est_mood
+
+"""
+Test functionality
+"""
+metrics = getMetrics()
 for metric in metrics:
     print(metric)
 
-# Analyse data
-
-# Ideally the metrics will be passed to a tuned LLM
-def get_mood_score_change(diff_percent):
-    if diff_percent > 30:
-        return 2
-    elif diff_percent > 15:
-        return 1
-    elif diff_percent > -15:
-        return 0
-    elif diff_percent > -30:
-        return -1
-    else:
-        return -2
-
-def determine_mood_and_coffee(data):
-    mood_score = 0
-
-    # Correctly access each metric's 'diff %'
-    for metric in data:
-        if 'diff %' in metric:
-            mood_score += get_mood_score_change(metric['diff %'])
-
-    # Determine mood from the mood score
-    mood = 'Positive' if mood_score > 1 else 'Neutral' if mood_score > -1 else 'Negative'
-
-    # Simple logic to choose coffee type based on mood, could be expanded
-    coffee_type = 'Latte' if mood == 'Positive' else 'Cappuccino' if mood == 'Neutral' else 'Mocha'
-    caffeine_level = 'High' if mood == 'Positive' else 'Medium' if mood == 'Neutral' else 'Low'
-    sugar_level = 'Low' if mood == 'Positive' else 'Medium' if mood == 'Neutral' else 'High'
-
-    return {
-        'Coffee Type': coffee_type,
-        'Caffeine Level': caffeine_level,
-        'Sugar Level': sugar_level,
-        'Additive': "protein, iron, omega-3"
-    }
-
-# Correct the data format and function call if needed
-# result = determine_mood_and_coffee(data)
-# print("Coffee Recommendation:", result)
+mood_score = evaluateMood(metrics)
+print(f'mood_score: {mood_score}')
