@@ -13,9 +13,12 @@ config = {
         "HKQuantityTypeIdentifierStepCount"
     ],
     # Please refer to spec (Apple Health Kit) 
+    "isTimeSensitive": [
+        "HKCategoryTypeIdentifierSleepAnalysis"
+    ],
     "isDiscreteType": [ 
-        "HKCategoryTypeIdentifierSleepAnalysis",
-        "HKQuantityTypeIdentifierAppleExerciseTime"
+        "HKQuantityTypeIdentifierAppleExerciseTime",
+        "HKQuantityTypeIdentifierStepCount"
     ]
 }
 

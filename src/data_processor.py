@@ -8,7 +8,7 @@ Importing functionality from other files
 """
 from config import config
 from init import filterData # Optional
-from helper_fn import parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount
+from helper_fn import parseTimeSensitiveData, parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount
 
 """
 Load config, to make modification please go to config (config.py) file
@@ -17,6 +17,7 @@ raw_xml = config["raw_xml"]
 processed_xml = config["processed_xml"]
 options = config["options"]
 isDiscreteType = config["isDiscreteType"]
+isTimeSensitive = config["isTimeSensitive"]
 
 """
 Initialising data, comment it out if original file "export.xml" has not been modified
@@ -83,14 +84,15 @@ def getMetrics():
                 'unit': record.get('unit')
             })
 
-        if type not in isDiscreteType:
-            metric = getSummary(type, records)
+        if type in isTimeSensitive:
+            data = parseTimeSensitiveData(type, records)
+            metric = getSummary(data.get("type"), data.get("records"))
         elif type in isDiscreteType:
             data = parseDiscreteData(type, records)
-            # print(data.get("type")) 
             metric = getSummary(data.get("type"), data.get("records"))
         else:
-            print("Invalid data.")
+            metric = getSummary(type, records)
+
 
         metrics.append(metric)
     return metrics

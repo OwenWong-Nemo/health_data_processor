@@ -6,20 +6,15 @@ from datetime import datetime, timedelta
 """
 Convert time data expressed as string into dateTime obj, easier to perform arithmetic operations
 """
-def strToDateTime(date_str):
+def strToDateTime(date_str: str):
     return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %z")
 
 """
-Some AppleHK data are discrete, more detail: README, hence required handler in order to generate data summary 
-
+Some AppleHK data are extracted based on time, more detail: README, hence required handler in order to generate data summary 
 """
-def parseDiscreteData(type, records: list):
-    if not records:
-        print("0 records found")
-        return []
-
+def parseTimeSensitiveData(type: str, records: list):
     rec = []
-    totalTime = timedelta(0)  # Initialize as timedelta
+    total_time = timedelta(0)  # Initialize as timedelta
     date = records[0].get('creationDate')[:10]  # Get only the date part
 
     for record in records:
@@ -28,22 +23,53 @@ def parseDiscreteData(type, records: list):
         current_date = record.get('creationDate')[:10]  # Get only the date part
 
         if current_date == date:
-            totalTime += endDate - startDate
+            total_time += endDate - startDate
         else:
             rec.append({
                 "creationDate": date,
-                "value": totalTime.total_seconds() / 3600,
-                "unit": "hours"
+                "value": total_time.total_seconds() / 3600,
+                "unit": "hours" # Std unit for time related metrics
             })
 
             date = current_date
-            totalTime = endDate - startDate  
+            # Reset and start accumulating
+            total_time = endDate - startDate  
 
     # Append the last day's data
     rec.append({
         "creationDate": date,
-        "value": totalTime.total_seconds() / 3600,
+        "value": total_time.total_seconds() / 3600,
         "unit": "hours"
+    })
+    return { "type": type, "records": rec}
+
+"""
+Handling discrete data, more detail: README
+"""
+def parseDiscreteData(type: str, records: list):
+    rec = []
+    total_val = 0
+    date = records[0].get('creationDate')[:10]  
+
+    for record in records:
+        current_date = record.get('creationDate')[:10]
+        if current_date == date:
+            total_val += float(record['value'])
+        else:
+            rec.append({
+                "creationDate": date,
+                "value": total_val,
+                "unit": record.get('unit')
+            })
+
+            date = current_date
+            total_val = float(record['value'])
+
+    # Append the last day's data
+    rec.append({
+        "creationDate": date,
+        "value": total_val,
+        "unit": record.get('unit')
     })
     return { "type": type, "records": rec}
 
