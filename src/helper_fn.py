@@ -2,6 +2,14 @@
 Contain parser, helper, special handler function etc
 """
 from datetime import datetime, timedelta
+import requests
+from config import config
+
+"""
+Constants
+"""
+curr_loc = "Kowloon City" # Ideally should be dynamic
+mood_to_coffee_map = config["mood_to_coffeeType"]
 
 """
 Convert time data expressed as string into dateTime obj, easier to perform arithmetic operations
@@ -183,11 +191,100 @@ def evaluateStepCount(stepCountData: dict):
         fluctuation += -1
     
     return step_count + fluctuation
-        
 
+"""
+Functions related to generate coffee recommendation
+"""
+
+"""
+Return a brief description of the mood, based on the score and the point system
+"""
+def getMoodDesc(score):
+    desc = ""
+    if score > 3:
+        desc = "Positive"
+    elif 1 <= score <= 3:
+        desc = "Toward Positive"
+    elif -1 <= score <= 0:
+        desc = "Neutral" 
+    elif -3 <= score <= -2:
+        desc = "Toward Negative"
+    elif score < -3:
+        desc = "Negative"
+    return desc
+
+"""
+Get current, local weather data
+"""
+def fetchWeatherData(district):
+    api_url = "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en"
+    curr_loc_weather = {}
     
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raises HTTPError for bad responses
+        curr_weather = response.json()
+
+        # Get data
+        rainfall = next((record for record in curr_weather['rainfall']['data'] if record['place'] == district), None)
+        uv = curr_weather['uvindex']['data']
+        temperature = next((record for record in curr_weather['temperature']['data'] if record['place'] == district), None)
+
+    except requests.RequestException as error:
+        print(f"Failed to fetch weather: {error}")
+        return None
+
+    curr_loc_weather = {
+        "rainfall": rainfall,
+        "uv": uv,
+        "temperature": temperature
+    }
+    return curr_loc_weather
+
+"""
+Return a concise summary of the weather data, for customising the coffee
+"""
+def getWeatherDataSummary(weather_data):
+    isRaining = weather_data['rainfall']['max'] < 0
+    uv = weather_data['uv'][0]['value'] # For some reason uv data is stored as a list
+    temperature = weather_data['temperature']['value']
+
+    summary = {
+        "isRaining": isRaining,
+        "uv": uv,
+        "temperature": temperature
+    }
+    return summary
+
+"""
+Determining the most suitable temperature for the coffee, according to weather data
+"""
+def setTemperature():
+    # Get weather data
+    weather_data_summary = getWeatherDataSummary(fetchWeatherData(curr_loc))
+    isRaining = weather_data_summary['isRaining']
+    temp = weather_data_summary['temperature']
+    if temp >= 30:
+        temp_desc = "Hot"
+    elif 20 <= temp <= 30:
+        temp_desc = "Normal"
+    else:
+        temp_desc = "Cold"
     
+    if temp_desc == "Hot":
+        coffee_temperature = "Cold"
+    elif temp_desc == "Normal":
+        coffee_temperature = "Room temperature"
+    elif temp_desc == "Cold" or isRaining:
+        coffee_temperature = "Hot"
     
+    return coffee_temperature
+    
+
+def getCoffeeType(mood_desc):
+    return mood_to_coffee_map.get(mood_desc)
+         
+
 
 
 

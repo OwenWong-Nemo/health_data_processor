@@ -2,13 +2,18 @@
 Import dependencies
 """
 import xml.etree.ElementTree as ET
-
+import requests
 """
 Importing functionality from other files
 """
 from config import config
 from init import filterData # Optional
-from helper_fn import parseTimeSensitiveData, parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount
+from helper_fn import parseTimeSensitiveData, parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount, getMoodDesc, setTemperature, getCoffeeType
+
+"""
+Constants
+"""
+CURR_LOCATION = "Kowloon City"
 
 """
 Load config, to make modification please go to config (config.py) file
@@ -98,6 +103,23 @@ def getMetrics():
         metrics.append(metric)
     return metrics
 
+def generateRecommendation():
+    # Get health data summary
+    metrics = getMetrics()
+    # Evaluate mood
+    mood_desc = getMoodDesc(estimateMood(metrics))
+    # Determine most suitable coffee type, more detail: README
+    coffeeType =  getCoffeeType(mood_desc)
+    # Customise temperature
+    temperature = setTemperature()
+
+    coffee = {
+        "coffeeType": coffeeType,
+        "temperature": temperature
+    }
+
+    return coffee
+
 """
 Analyse metrics, evaluate mood then make a recommendation that takes several 
 factors into consideration, catering to user's need
@@ -122,38 +144,7 @@ def estimateMood(data):
             est_mood += metric_score
     return est_mood
 
-def getMoodDesc(score):
-    desc = ""
-    if score > 3:
-        desc = "Positive"
-    elif 1 <= score <= 3:
-        desc = "Toward Positive"
-    elif -1 <= score <= 0:
-        desc = "Neutral" 
-    elif -3 <= score <= -2:
-        desc = "Toward Negative"
-    elif score < -3:
-        desc = "Negative"
-    return desc
-        
 """
 Test functionality
 """
-metrics = getMetrics()
-for metric in metrics:
-    print(metric)
-
-mood_score = estimateMood(metrics)
-print(f'mood_score: {mood_score}')
-
-def getCoffeeType(mood_desc):
-    return mood_to_coffee_map.get(mood_desc)
-
-mood_desc = getMoodDesc(mood_score)
-
-ct = getCoffeeType(mood_desc)
-print(f'Recommendation coffee type is: {ct}')
-
-
-
-    
+print(generateRecommendation())
