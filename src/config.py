@@ -19,7 +19,14 @@ config = {
     "isDiscreteType": [ 
         "HKQuantityTypeIdentifierAppleExerciseTime",
         "HKQuantityTypeIdentifierStepCount"
-    ]
+    ],
+    "mood_to_coffeeType": {
+        "Negative": "Mocha",
+        "Toward Negative": "Espresso",
+        "Neutral": "Long Black",
+        "Toward Positive": "Latte",
+        "Positive": "Cappuccino"
+    }
 }
 
 

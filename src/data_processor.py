@@ -18,6 +18,7 @@ processed_xml = config["processed_xml"]
 options = config["options"]
 isDiscreteType = config["isDiscreteType"]
 isTimeSensitive = config["isTimeSensitive"]
+mood_to_coffee_map = config["mood_to_coffeeType"]
 
 """
 Initialising data, comment it out if original file "export.xml" has not been modified
@@ -101,9 +102,8 @@ def getMetrics():
 Analyse metrics, evaluate mood then make a recommendation that takes several 
 factors into consideration, catering to user's need
 """
-def evaluateMood(data):
+def estimateMood(data):
     est_mood = 0
-    # TODO
     for metric in data:
         if metric["type"] == "AppleExerciseTime":
             metric_score = evaluateAppleExerciseTime(metric)
@@ -122,6 +122,20 @@ def evaluateMood(data):
             est_mood += metric_score
     return est_mood
 
+def getMoodDesc(score):
+    desc = ""
+    if score > 3:
+        desc = "Positive"
+    elif 1 <= score <= 3:
+        desc = "Toward Positive"
+    elif -1 <= score <= 0:
+        desc = "Neutral" 
+    elif -3 <= score <= -2:
+        desc = "Toward Negative"
+    elif score < -3:
+        desc = "Negative"
+    return desc
+        
 """
 Test functionality
 """
@@ -129,5 +143,17 @@ metrics = getMetrics()
 for metric in metrics:
     print(metric)
 
-mood_score = evaluateMood(metrics)
+mood_score = estimateMood(metrics)
 print(f'mood_score: {mood_score}')
+
+def getCoffeeType(mood_desc):
+    return mood_to_coffee_map.get(mood_desc)
+
+mood_desc = getMoodDesc(mood_score)
+
+ct = getCoffeeType(mood_desc)
+print(f'Recommendation coffee type is: {ct}')
+
+
+
+    
