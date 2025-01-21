@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 from config import config
 from init import filterData # Optional
 from datetime import datetime
-from helper_fn import parseTimeSensitiveData, parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount, getMoodDesc, getWeatherData, getWeatherDataSummary, getCoffeeType, setTemperature, setSweetness, setCaffeine
+from helper_fn import parseTimeSensitiveData, parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount, getMoodDesc, getWeatherData, getWeatherDataSummary, getCoffeeType, setTemperature, setSweetness, setCaffeine, checkSymptoms, setAdditive
 
 """
 Constants/ hardcode variable
@@ -30,7 +30,7 @@ mood_to_coffee_map = config["mood_to_coffeeType"]
 """
 Initialising data, comment it out if original file "export.xml" has not been modified
 """
-filterData(raw_xml, processed_xml, options)
+# filterData(raw_xml, processed_xml, options)
 
 """
 Processed data, returning a summary of each health data which will be used for further 
@@ -138,8 +138,8 @@ def generateRecommendation():
     curr_time = datetime.now().time()
     
     # For debug
-    # for metric in metrics:
-    #     print(metric)
+    for metric in metrics:
+        print(metric)
 
     # Init, accessing metric data
     exerciseData = bodyMassData = restingHeartRateData = sleepData = stepCountData = None
@@ -164,12 +164,21 @@ def generateRecommendation():
     sweetness = setSweetness(mood_desc, bodyMassData, sleepData, stepCountData) 
     # Customise caffeine level
     caffeine = setCaffeine(curr_time, sleepData)
+    # Examine symptoms
+    symptoms = checkSymptoms(exerciseData, bodyMassData, restingHeartRateData, sleepData, stepCountData)
+    additive = setAdditive(symptoms)
+
+    # Debug 
+    print(symptoms)
+    print(additive)
+
 
     coffee = {
         "coffeeType": coffeeType,
         "temperature": temperature,
         "sweetness": sweetness,
-        "caffeine": caffeine
+        "caffeine": caffeine,
+        "additive": additive
     }
 
     return coffee

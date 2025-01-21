@@ -292,7 +292,7 @@ def setSweetness(mood_desc, bodyMassData, sleepData, stepCountData):
     sweetness = 0
 
     if mood_desc is None or bodyMassData is None or sleepData is None or stepCountData is None:
-        print("Warning: Insufficient data")
+        print("(setSweetness) Warning: Insufficient data")
         return sweetness
     if mood_desc in ['Negative', 'Toward Negative']:
         sweetness += 25
@@ -311,7 +311,7 @@ Determining the ideal caffeine level
 def setCaffeine(curr_time, sleepData):
     caffeine = 100
     if sleepData is None:
-        print("Warning: No sleep data available")
+        print("(setCaffeine) Warning: No sleep data available")
         notEnoughSleep = False 
     else:
         notEnoughSleep = sleepData['latest_rec']['value'] < 6
@@ -338,6 +338,96 @@ def setCaffeine(curr_time, sleepData):
     return caffeine
 
 """
-Determine any vitamin to add
+Determine any vitamin to add, addressed most common health symptoms
 """
+def checkSymptoms(exerciseData, bodyMassData, restingHeartRateData, sleepData, stepCountData):
+    fatigue = checkFatigue(sleepData, stepCountData)
+    stressAndAnxiety = checkStressAndAnxiety(bodyMassData, restingHeartRateData, sleepData)
+    digestiveIssues = checkDigestiveIssues(bodyMassData)
+    poorImmuneFunction = checkPoorImmuneFunction(exerciseData, sleepData, stepCountData)
+    jointPain = checkJointPain(exerciseData, bodyMassData, stepCountData)
+    poorSkinHealth = checkPoorSkinHealth(exerciseData, sleepData, restingHeartRateData)
+
+    symptoms = {
+        "fatigue": fatigue,
+        "stressAndAnxiety": stressAndAnxiety,
+        "digestiveIssues": digestiveIssues,
+        "poorImmuneFunction": poorImmuneFunction,
+        "jointPain": jointPain,
+        "poorSkinHealth": poorSkinHealth
+    }
+
+    return symptoms
+
+def setAdditive(symptoms):
+    additives = set()
+    symptoms_to_additives = config["symptoms_to_additives"]
+
+    for symptom, value in symptoms.items():
+        if value == 1:
+            if symptom in symptoms_to_additives:
+                additives.update(symptoms_to_additives[symptom])
+
+    return list(additives)
+
+def checkFatigue(sleepData, stepCountData):
+    if sleepData is None or stepCountData is None:
+        print("(checkFatigue) Warning: Insufficient data")
+        return 0
+    else: 
+        if sleepData['avr'] < 6 and stepCountData['avr'] < 10000:
+            return 1
+        else:
+            return 0
+        
+def checkStressAndAnxiety(bodyMassData, restingHeartRateData, sleepData):
+    if bodyMassData is None or restingHeartRateData is None or sleepData is None:
+        print("(checkStressAndAnxiety) Warning: Insufficient data")
+        return 0
+    else:
+        if abs(bodyMassData['diff%']) > 3 and restingHeartRateData['diff'] > 5 and sleepData['diff%'] > 30:
+            return 1
+        else:
+            return 0
+
+def checkDigestiveIssues(bodyMassData):
+    if bodyMassData is None :
+        print("(checkDigestiveIssues) Warning: Insufficient data")
+        return 0
+    else:
+        if bodyMassData['diff%'] > 3:
+            return 1
+        else:
+            return 0
+
+def checkPoorImmuneFunction(exerciseData, sleepData, stepCountData):
+    if exerciseData is None or sleepData is None or stepCountData is None:
+        print("(checkPoorImmuneFunction) Warning: Insufficient data")
+        return 0
+    else:
+        if exerciseData['avr'] < 30 and stepCountData['avr'] < 8000 and sleepData['avr'] < 6:
+            return 1
+        else:
+            return 0
+        
+def checkJointPain(exerciseData, bodyMassData, stepCountData):
+    if exerciseData is None or bodyMassData is None or stepCountData is None:
+        print("(checkJointPain) Warning: Insufficient data")
+        return 0
+    else:
+        if exerciseData['avr'] < 30 and bodyMassData['diff%'] > 3 and stepCountData['avr'] < 8000:
+            return 1
+        else:
+            return 0
+
+def checkPoorSkinHealth(exerciseData, sleepData, restingHeartRateData):
+    if exerciseData is None or sleepData is None or restingHeartRateData is None:
+        print("(checkPoorSkinHealth) Warning: Insufficient data")
+        return 0
+    else:
+        if exerciseData['avr'] < 30 and sleepData['avr'] < 6 and restingHeartRateData['diff'] > 5:
+            return 1
+        else:
+            return 0
+        
 
