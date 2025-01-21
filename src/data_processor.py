@@ -17,7 +17,6 @@ Constants/ hardcode variable
 """
 curr_loc = "Kowloon City"
 
-
 """
 Load config, to make modification please go to config (config.py) file
 """
@@ -31,7 +30,7 @@ mood_to_coffee_map = config["mood_to_coffeeType"]
 """
 Initialising data, comment it out if original file "export.xml" has not been modified
 """
-# filterData(raw_xml, processed_xml, options)
+filterData(raw_xml, processed_xml, options)
 
 """
 Processed data, returning a summary of each health data which will be used for further 
@@ -52,26 +51,31 @@ def getSummary(type: str, records: list):
     else:
         print("Other prefix")
     
-    if len(records) < 0:
-        print("0 record found.")
-    else: 
-        values = [float(record['value']) for record in records]
-        avr = sum(values) / len(values)
-        diff = values[-1] - avr
+    if len(records) == 0:
+        print(f"No records found for type: {type}")
+        return None
+    
+    values = [float(record['value']) for record in records if 'value' in record]
+    if not values:
+        print(f"No valid values found for type: {type}")
+        return None
 
-        latest_rec = {
-            'creationDate': records[-1].get('creationDate'), # Optional
-            'value': records[-1].get('value'),
-            'unit': records[-1].get('unit')
-        }
+    avr = sum(values) / len(values)
+    diff = values[-1] - avr
 
-        metric = {
-            'type': type,
-            'latest_rec': latest_rec,
-            'avr':  avr, 
-            'diff': diff,
-            'diff%': diff/avr * 100
-        }
+    latest_rec = {
+        'creationDate': records[-1].get('creationDate'), # Optional
+        'value': records[-1].get('value'),
+        'unit': records[-1].get('unit')
+    }
+
+    metric = {
+        'type': type,
+        'latest_rec': latest_rec,
+        'avr':  avr, 
+        'diff': diff,
+        'diff%': diff/avr * 100
+    }
     return metric
 
 # Return list of summary of all wanted data
@@ -93,17 +97,31 @@ def getMetrics():
                 'unit': record.get('unit')
             })
 
+        if not records:
+            print(f"No records found for type: {type}")
+            continue
+
         if type in isTimeSensitive:
             data = parseTimeSensitiveData(type, records)
-            metric = getSummary(data.get("type"), data.get("records"))
+            if data:
+                # print(f"Time sensitive data for {type}: {data}")
+                metric = getSummary(data.get("type"), data.get("records"))
+            else:
+                print(f"No time sensitive data for {type}")
+                metric = None
         elif type in isDiscreteType:
             data = parseDiscreteData(type, records)
-            metric = getSummary(data.get("type"), data.get("records"))
+            if data:
+                # print(f"Discrete data for {type}: {data}")
+                metric = getSummary(data.get("type"), data.get("records"))
+            else:
+                print(f"No discrete data for {type}")
+                metric = None
         else:
             metric = getSummary(type, records)
 
-
-        metrics.append(metric)
+        if metric:
+            metrics.append(metric)
     return metrics
 
 def generateRecommendation():
@@ -114,16 +132,17 @@ def generateRecommendation():
     weather_data_summary = getWeatherDataSummary(getWeatherData(curr_loc))
 
     # debug 
-    print(getWeatherData(curr_loc))
-    print(weather_data_summary) 
+    # print(getWeatherData(curr_loc))
+    # print(weather_data_summary) 
 
     curr_time = datetime.now().time()
     
     # For debug
-    for metric in metrics:
-        print(metric)
+    # for metric in metrics:
+    #     print(metric)
 
     # Init, accessing metric data
+    exerciseData = bodyMassData = restingHeartRateData = sleepData = stepCountData = None
     for metric in metrics:
         if metric['type'] == 'AppleExerciseTime':
             exerciseData = metric
@@ -145,7 +164,6 @@ def generateRecommendation():
     sweetness = setSweetness(mood_desc, bodyMassData, sleepData, stepCountData) 
     # Customise caffeine level
     caffeine = setCaffeine(curr_time, sleepData)
-
 
     coffee = {
         "coffeeType": coffeeType,
@@ -183,5 +201,4 @@ def estimateMood(data):
 """
 Test functionality
 """
-print(getWeatherData(curr_loc)) # debug
 print(generateRecommendation())

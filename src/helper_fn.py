@@ -99,7 +99,7 @@ def evaluateAppleExerciseTime(appleExerciseTimeData: dict):
     except (ValueError, TypeError, KeyError) as e:
         raise ValueError(f"Invalid data encountered in AppleExerciseTime: {e}")
     if latest_rec_val > 45:
-        return 1
+        return 1 
     elif 25 <= latest_rec_val <= 45:
         return 0
     else:
@@ -197,10 +197,6 @@ def evaluateStepCount(stepCountData: dict):
     return step_count + fluctuation
 
 """
-Functions related to generate coffee recommendation
-"""
-
-"""
 Return a brief description of the mood, based on the score and the point system
 """
 def getMoodDesc(score):
@@ -229,7 +225,6 @@ def getWeatherData(district):
         response.raise_for_status()  # Raises HTTPError for bad responses
         curr_weather = response.json()
 
-        print(curr_weather)
         # Get data
         rainfall = next((record for record in curr_weather['rainfall']['data'] if record['place'] == district), None)
         uv = curr_weather['uvindex']['data'] # Does not work at night
@@ -295,7 +290,10 @@ Determining the ideal sweetness level, based several data
 """
 def setSweetness(mood_desc, bodyMassData, sleepData, stepCountData):
     sweetness = 0
-    
+
+    if mood_desc is None or bodyMassData is None or sleepData is None or stepCountData is None:
+        print("Warning: Insufficient data")
+        return sweetness
     if mood_desc in ['Negative', 'Toward Negative']:
         sweetness += 25
     if abs(bodyMassData['diff%']) < 3:
@@ -312,8 +310,11 @@ Determining the ideal caffeine level
 """
 def setCaffeine(curr_time, sleepData):
     caffeine = 100
-
-    notEnoughSleep = sleepData['latest_rec']['value'] < 6
+    if sleepData is None:
+        print("Warning: No sleep data available")
+        notEnoughSleep = False 
+    else:
+        notEnoughSleep = sleepData['latest_rec']['value'] < 6
 
     # Defining when a time period starts
     morning = datetime.strptime('6:00 AM', '%I:%M %p').time()
