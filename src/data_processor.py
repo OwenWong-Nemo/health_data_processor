@@ -11,6 +11,7 @@ from config import config
 from init import filterData # Optional
 from datetime import datetime
 from helper_fn import parseTimeSensitiveData, parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount, getMoodDesc, getWeatherData, getWeatherDataSummary, getCoffeeType, setTemperature, setSweetness, setCaffeine, checkSymptoms, setAdditive
+import json
 
 """
 Constants/ hardcode variable
@@ -133,13 +134,13 @@ def generateRecommendation():
 
     # debug 
     # print(getWeatherData(curr_loc))
-    # print(weather_data_summary) 
+    print(f'Current location: {curr_loc} \nWeather Data Summary: {weather_data_summary}') 
 
     curr_time = datetime.now().time()
     
     # For debug
     for metric in metrics:
-        print(metric)
+        print(json.dumps(metric, indent=4))
 
     # Init, accessing metric data
     exerciseData = bodyMassData = restingHeartRateData = sleepData = stepCountData = None
@@ -169,9 +170,8 @@ def generateRecommendation():
     additive = setAdditive(symptoms)
 
     # Debug 
-    print(symptoms)
-    print(additive)
-
+    print(f'Detected symptom(s): {symptoms}')
+    print(f'Recommend nutrient(s): {additive}')
 
     coffee = {
         "coffeeType": coffeeType,
@@ -210,4 +210,5 @@ def estimateMood(data):
 """
 Test functionality
 """
-print(generateRecommendation())
+recommendation = generateRecommendation()
+print(json.dumps(recommendation, indent=4))
