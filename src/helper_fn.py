@@ -225,9 +225,13 @@ def getWeatherData(district):
         response.raise_for_status()  # Raises HTTPError for bad responses
         curr_weather = response.json()
 
+        # print(f"Current weather data: {curr_weather}")
         # Get data
         rainfall = next((record for record in curr_weather['rainfall']['data'] if record['place'] == district), None)
-        uv = curr_weather['uvindex']['data'] # Does not work at night
+        if curr_weather['uvindex'] is '':
+            uv = None
+        else:
+            uv = curr_weather['uvindex']['data']
         temperature = next((record for record in curr_weather['temperature']['data'] if record['place'] == district), None)
 
     except requests.RequestException as error:
@@ -246,7 +250,10 @@ Return a concise summary of the weather data, for customising the coffee
 """
 def getWeatherDataSummary(weather_data):
     isRaining = weather_data['rainfall']['max'] < 0
-    uv = weather_data['uv'][0]['value'] # For some reason uv data is stored as a list
+    if weather_data['uv'] is None:
+        uv = "No data available at the moment"
+    else:
+        uv = weather_data['uv'][0]['value'] # For some reason uv data is stored as a list
     temperature = weather_data['temperature']['value']
 
     summary = {
