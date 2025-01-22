@@ -30,7 +30,7 @@ mood_to_coffee_map = config["mood_to_coffeeType"]
 """
 Initialising data, comment it out if original file "export.xml" has not been modified
 """
-# filterData(raw_xml, processed_xml, options)
+filterData(raw_xml, processed_xml, options)
 
 """
 Processed data, returning a summary of each health data which will be used for further 
