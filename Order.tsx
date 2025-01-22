@@ -50,7 +50,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
         style={[
           styles.sectionTitle,
           {
-            color: isDarkMode ? '#FFEBEE' : '#3E2723',
+            color: isDarkMode ? '#FFEBEE' : '#4e342e',
           },
         ]}>
         {title}
@@ -87,7 +87,7 @@ function Order(): React.JSX.Element {
   //slidable : brew temp
   const {brew_temperature, setBrewTemperature} = useSelection();
   const screenWidth = Dimensions.get('window').width;
-  const [barPosition, setBarPosition] = useState<number>( (screenWidth-50)*((brew_temperature-50)/50)); //default 80 deg
+  const [barPosition, setBarPosition] = useState<number>( (screenWidth-70)*((brew_temperature-50)/50)); //default 80 deg
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -95,10 +95,10 @@ function Order(): React.JSX.Element {
 
       // Ensure the bar stays within screen bounds
       if (newPosition < 0) newPosition = 0;
-      if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
+      if (newPosition > screenWidth-70) newPosition = screenWidth-70; //don't know why 50
 
       setBarPosition(newPosition);
-      setBrewTemperature(Math.round((newPosition / (screenWidth-50)) * 50)+50);
+      setBrewTemperature(Math.round((newPosition / (screenWidth-70)) * 50)+50);
     },
   });
  
@@ -113,15 +113,15 @@ function Order(): React.JSX.Element {
 
       // Ensure the bar stays within screen bounds
       if (newPosition < 0) newPosition = 0;
-      if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
+      if (newPosition > screenWidth-70) newPosition = screenWidth-70; //don't know why 50
       setsugarPosition(newPosition);
-      setSugarLevel(Math.round((newPosition)/(screenWidth-50)*100));
+      setSugarLevel(Math.round((newPosition)/(screenWidth-70)*100));
     },
   });
 
   //caffeine level
   const {caffeine_level, setCaffeineLevel} = useSelection();
-  const [caffeinePosition, setcaffeinePosition] = useState<number>(caffeine_level/100*(screenWidth-50)); 
+  const [caffeinePosition, setcaffeinePosition] = useState<number>(caffeine_level/100*(screenWidth-70)); 
   const caffeineResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -129,15 +129,15 @@ function Order(): React.JSX.Element {
 
       // Ensure the bar stays within screen bounds
       if (newPosition < 0) newPosition = 0;
-      if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
+      if (newPosition > screenWidth-70) newPosition = screenWidth-70; //don't know why 50
       setcaffeinePosition(newPosition);
-      setCaffeineLevel(Math.round((newPosition)/(screenWidth-50)*100));
+      setCaffeineLevel(Math.round((newPosition)/(screenWidth-70)*100));
     },
   });
 
   //milk level
   const {milk_level, setMilkLevel} = useSelection();
-  const [milkPosition, setmilkPosition] = useState<number>(milk_level/100*(screenWidth-50));
+  const [milkPosition, setmilkPosition] = useState<number>(milk_level/100*(screenWidth-70));
   const milkResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -145,9 +145,9 @@ function Order(): React.JSX.Element {
 
       // Ensure the bar stays within screen bounds
       if (newPosition < 0) newPosition = 0;
-      if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
+      if (newPosition > screenWidth-70) newPosition = screenWidth-70; //don't know why 50
       setmilkPosition(newPosition);
-      setMilkLevel(Math.round((newPosition)/(screenWidth-50)*100));
+      setMilkLevel(Math.round((newPosition)/(screenWidth-70)*100));
     },
   });
   
@@ -232,6 +232,19 @@ const {coffee_bean_type}= useSelection();//for bean type
 
                 <View style={styles.radioButton}>
                     <RadioButton.Android
+                        value="room"
+                        status={serveTemp === 'room' ? 
+                                'checked' : 'unchecked'}
+                        onPress={() => setserveTemp('room')}
+                        color="#795548"
+                    />
+                    <Text style={styles.radioLabel}>
+                        Room temp
+                    </Text>
+                </View>
+
+                <View style={styles.radioButton}>
+                    <RadioButton.Android
                         value="cold"
                         status={serveTemp === 'cold' ? 
                                  'checked' : 'unchecked'}
@@ -239,34 +252,10 @@ const {coffee_bean_type}= useSelection();//for bean type
                         color="#795548"
                     />
                     <Text style={styles.radioLabel}>
-                        Cold (no ice)
+                        Cold
                     </Text>
                 </View>
 
-                <View style={styles.radioButton}>
-                    <RadioButton.Android
-                        value="iced"
-                        status={serveTemp === 'iced' ? 
-                                'checked' : 'unchecked'}
-                        onPress={() => setserveTemp('iced')}
-                        color="#795548"
-                    />
-                    <Text style={styles.radioLabel}>
-                        Iced
-                    </Text>
-                </View>
-                <View style={styles.radioButton}>
-                    <RadioButton.Android
-                        value="iced++"
-                        status={serveTemp === 'iced++' ? 
-                                'checked' : 'unchecked'}
-                        onPress={() => setserveTemp('iced++')}
-                        color="#795548"
-                    />
-                    <Text style={styles.radioLabel}>
-                        More ice
-                    </Text>
-                </View>
 
             </View>
         </View>
@@ -310,7 +299,7 @@ const {coffee_bean_type}= useSelection();//for bean type
               toggleNutrient('item1');
             }
           }
-           color='blue'
+           color='#795548'
           />
           <Text>V1</Text>
           </View>
@@ -322,7 +311,7 @@ const {coffee_bean_type}= useSelection();//for bean type
               toggleNutrient('item2');
             }
           }
-           color='blue'
+           color='#795548'
           />
           <Text> V2</Text>
           </View>
@@ -334,7 +323,7 @@ const {coffee_bean_type}= useSelection();//for bean type
               toggleNutrient('item3');
             }
           }
-           color='blue'
+           color='#795548'
           />
           <Text> V3</Text>
           </View>
@@ -346,7 +335,7 @@ const {coffee_bean_type}= useSelection();//for bean type
               toggleNutrient('item4');
             }
           }
-           color='blue'
+           color='#795548'
           />
           <Text>V4</Text>
           </View>
@@ -414,13 +403,29 @@ const {coffee_bean_type}= useSelection();//for bean type
         </View>
           </Section>
             {/* <Section title="Foam"> */}
-            <View style={styles.checkboxContainer}>
-              <Text style={styles.sectionTitle}>Foam</Text>
+            <View style={styles.foamContainer}>
+              <Text style={[styles.sectionTitle, 
+                {color: isDarkMode ? '#FFEBEE' : '#4E342E' }
+              ]}>Foam
+              </Text>
               <Icon.Button
               onPress={() => navigation.navigate('Foam')}
               name="arrow-right"
-              backgroundColor="transparent"
+              backgroundColor="#eee9e8"
+              underlayColor="#eee9e8" // Background color when button is pressed
               color="#795548"
+              style={{
+                width: 40, // Set width
+                height: 40, // Set height (equal to width for a circle)
+                borderRadius: 20, // Half of the width/height for a perfect circle
+                justifyContent: 'center', // Center the content horizontally
+                alignItems: 'center', // Center the content vertically
+                paddingHorizontal: 0, // Remove extra horizontal padding
+                backgroundColor:"#d7ccc8"
+              }}
+              iconStyle={{
+                marginRight: 0, // Remove default icon margin
+              }}
               />
             </View>
             {/* </Section> */}
@@ -524,11 +529,19 @@ const styles = StyleSheet.create({
 checkboxContainer: {
   //margin: 30,
   //alignItems: 'center',
-  color: 'green',
+  backgroundColor: '#EEE9E8',
   paddingTop: 0,
   paddingBottom: 0,
   flexDirection: 'row',
   alignItems: 'center',
+},
+
+foamContainer:{
+  flexDirection: 'row',
+  paddingLeft: 25,
+  backgroundColor: '#EEE9E8',
+  alignItems: 'center',
+  gap:250
 },
 
 //button

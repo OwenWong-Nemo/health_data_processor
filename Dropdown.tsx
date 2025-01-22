@@ -38,17 +38,17 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
     };
 
     return (
-      <View style={styles.dropdownContainer}>
-        {renderLabel()}
+      <View style={styles.dropdownContainer_location}>
+        {/* {renderLabel()} */}
         <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          style={[styles.dropdown, isFocus && { borderColor: 'grey' }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
           data={data}
           search
-          maxHeight={200}
+          maxHeight={170}
           labelField="label"
           valueField="value"
           placeholder={!isFocus ? 'Select station' : '...'}
@@ -71,16 +71,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
     const { coffee_bean_type, setBean } = useSelection();
     const [isFocus, setIsFocus] = useState(false);
 
-    const renderLabel = () => {
-      if (coffee_bean_type || isFocus) {
-        return (
-          <Text style={[styles.label, isFocus && { color: 'blue' }]}>
-            Coffee bean type
-          </Text>
-        );
-      }
-      return null;
-    };
 
     const renderItem = (item) => { //for the options in BeanDropdown
       if (item.icon != null) {
@@ -99,9 +89,9 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
     return (
       <View style={styles.dropdownContainer}>
-        {renderLabel()}
+        {/* {renderLabel()} */}
         <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          style={[styles.dropdown, isFocus && { borderColor: 'grey' }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
@@ -134,21 +124,26 @@ const styles = StyleSheet.create({
   textInput: {
     borderColor: 'gray',
     borderWidth: 1,
+    
   },
   resultContainer: {
     flexDirection: 'row',
     padding: 10,
+    backgroundColor: '#green',
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
+  
   itemContainer: { //for the options in BeanDropdown
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'white',
     padding: 10,
+    gap: 10,
+},
+dropdownContainer_location: {
+  //backgroundColor: '5D4037',
+  padding: 16,
+  width: '100%',
+  height: 60,
 },
 
   dropdownContainer: {
