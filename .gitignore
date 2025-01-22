@@ -2,3 +2,4 @@
 health_data_sample/
 *.xml
 node_modules
+android/
