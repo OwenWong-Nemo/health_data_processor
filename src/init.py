@@ -23,4 +23,4 @@ def filterData(input_xml_path, output_xml_path, types):
     new_tree = ET.ElementTree(new_root)
     new_tree.write(output_xml_path)
 
-    print(f"Processed data has been initialized and written to: {output_xml_path}")
+    print(f"\nProcessed data has been initialized and written to: {output_xml_path}\n")

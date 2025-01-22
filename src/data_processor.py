@@ -128,19 +128,22 @@ def getMetrics():
 def generateRecommendation():
     # Preparation
     metrics = getMetrics()
+    # <br>
+    print('\n')
     mood_desc = getMoodDesc(estimateMood(metrics))
     coffeeType =  getCoffeeType(mood_desc)
     weather_data_summary = getWeatherDataSummary(getWeatherData(curr_loc))
 
     # debug 
     # print(getWeatherData(curr_loc))
-    print(f'Current location: {curr_loc} \nWeather Data Summary: {weather_data_summary}') 
+    print(f'Current location: {curr_loc} \nWeather Data Summary: {weather_data_summary}\n') 
 
     curr_time = datetime.now().time()
     
     # For debug
     for metric in metrics:
-        print(json.dumps(metric, indent=4))
+        print("Available metrics: ")
+        print(f'json.dumps(metric, indent=4)\n')
 
     # Init, accessing metric data
     exerciseData = bodyMassData = restingHeartRateData = sleepData = stepCountData = None
@@ -170,8 +173,8 @@ def generateRecommendation():
     additive = setAdditive(symptoms)
 
     # Debug 
-    print(f'Detected symptom(s): {symptoms}')
-    print(f'Recommend nutrient(s): {additive}')
+    print(f'Detected symptom(s): {symptoms}\n')
+    print(f'Recommend nutrient(s): {additive}\n')
 
     coffee = {
         "coffeeType": coffeeType,

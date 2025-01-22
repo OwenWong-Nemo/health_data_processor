@@ -311,7 +311,7 @@ Determining the ideal caffeine level
 def setCaffeine(curr_time, sleepData):
     caffeine = 100
     if sleepData is None:
-        print("(setCaffeine) Warning: No sleep data available")
+        print("(setCaffeine) Warning: Insufficient data")
         notEnoughSleep = False 
     else:
         notEnoughSleep = sleepData['latest_rec']['value'] < 6

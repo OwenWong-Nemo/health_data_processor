@@ -2,8 +2,8 @@
 All options, file path to both "source file" and output file are specified here
 """
 config = {
-    "raw_xml": "/Users/owenwong/Desktop/health_data_processor/healthDate/raw_data/export_demo2.xml", # Input: Raw data
-    "processed_xml": "/Users/owenwong/Desktop/health_data_processor/healthDate/filtered_data/filtered_demo2.xml", # Output: Filtered data 
+    "raw_xml": "/Users/owenwong/Desktop/health_data_processor/healthDate/raw_data/export_demo8.xml", # Input: Raw data
+    "processed_xml": "/Users/owenwong/Desktop/health_data_processor/healthDate/filtered_data/filtered_demo8.xml", # Output: Filtered data 
     # More options available, more detail: README
     "options": [
         "HKQuantityTypeIdentifierAppleExerciseTime",
