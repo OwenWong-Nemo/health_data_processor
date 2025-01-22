@@ -42,13 +42,16 @@ type SectionProps = PropsWithChildren<{
 
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+
   return (
-    <View style={styles.sectionContainer}>
+    <View style={[styles.sectionContainer, 
+      { backgroundColor: isDarkMode ? '#5D4037' : '#EEE9E8' }
+    ]}>
       <Text
         style={[
           styles.sectionTitle,
           {
-            color: isDarkMode ? Colors.white : Colors.black,
+            color: isDarkMode ? '#FFEBEE' : '#4e342e',
           },
         ]}>
         {title}
@@ -57,7 +60,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
         style={[
           styles.sectionDescription,
           {
-            color: isDarkMode ? Colors.light : Colors.dark,
+            color: isDarkMode ?'#FFEBEE' : '#4E342E',
           },
         ]}>
         {children}
@@ -66,16 +69,51 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
+
+
 function Order(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+  //image
+  
+  
+  const renderImage = () => {
+    const { imgSrc } = useSelection();
+    if (imgSrc==="mocha"){
+      const imageSource = require('./mocha.png');
+
+      // Get the local image dimensions
+      const image = Image.resolveAssetSource(imageSource);
+      const aspectRatio = image.width / image.height;
+      return (
+        <Image source={require('./mocha.png')}
+        resizeMode="contain"
+        style={{ width: screenWidth, // Fit the width of the screen
+          height: screenWidth / aspectRatio }}  />)
+    }
+    else{
+      const imageSource = require('./order.png');
+
+      // Get the local image dimensions
+      const image = Image.resolveAssetSource(imageSource);
+      const aspectRatio = image.width / image.height;
+      return (
+        <Image source={require('./order.png')}
+        resizeMode="contain"
+        style={{ width: screenWidth, // Fit the width of the screen
+          height: screenWidth / aspectRatio }}  />)
+    }
+  }
+
+ 
 
   //slidable : brew temp
+  const {brew_temperature, setBrewTemperature} = useSelection();
   const screenWidth = Dimensions.get('window').width;
-  const [barPosition, setBarPosition] = useState<number>( (screenWidth-50)*0.6); //default 80 deg
+  const [barPosition, setBarPosition] = useState<number>( (screenWidth-70)*((brew_temperature-50)/50)); //default 80 deg
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -83,15 +121,17 @@ function Order(): React.JSX.Element {
 
       // Ensure the bar stays within screen bounds
       if (newPosition < 0) newPosition = 0;
-      if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
+      if (newPosition > screenWidth-70) newPosition = screenWidth-70; //don't know why 50
 
       setBarPosition(newPosition);
+      setBrewTemperature(Math.round((newPosition / (screenWidth-70)) * 50)+50);
     },
   });
-  let temperature = Math.round((barPosition / (screenWidth-50)) * 50)+50;
+ 
 
   //for sugar level 
-  const [sugarPosition, setsugarPosition] = useState<number>(0); 
+  const {sugar_level, setSugarLevel} = useSelection();
+  const [sugarPosition, setsugarPosition] = useState<number>(sugar_level/100*(screenWidth-50)); 
   const sugarResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -99,28 +139,62 @@ function Order(): React.JSX.Element {
 
       // Ensure the bar stays within screen bounds
       if (newPosition < 0) newPosition = 0;
-      if (newPosition > screenWidth-50) newPosition = screenWidth-50; //don't know why 50
-
+      if (newPosition > screenWidth-70) newPosition = screenWidth-70; //don't know why 50
       setsugarPosition(newPosition);
+      setSugarLevel(Math.round((newPosition)/(screenWidth-70)*100));
     },
   });
-  let percentage = Math.round((sugarPosition / (screenWidth-50)) * 100);
 
-  //radio button: grind size 
-  const [grindValue, setGrindValue] = useState('small');
-  //radio button: cup size
-  const [cupValue, setCupValue] = useState('small');
+  //caffeine level
+  const {caffeine_level, setCaffeineLevel} = useSelection();
+  const [caffeinePosition, setcaffeinePosition] = useState<number>(caffeine_level/100*(screenWidth-70)); 
+  const caffeineResponder = PanResponder.create({
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderMove: (evt, gestureState) => {
+      let newPosition = gestureState.moveX;
+
+      // Ensure the bar stays within screen bounds
+      if (newPosition < 0) newPosition = 0;
+      if (newPosition > screenWidth-70) newPosition = screenWidth-70; //don't know why 50
+      setcaffeinePosition(newPosition);
+      setCaffeineLevel(Math.round((newPosition)/(screenWidth-70)*100));
+    },
+  });
+
+  //milk level
+  const {milk_level, setMilkLevel} = useSelection();
+  const [milkPosition, setmilkPosition] = useState<number>(milk_level/100*(screenWidth-70));
+  const milkResponder = PanResponder.create({
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderMove: (evt, gestureState) => {
+      let newPosition = gestureState.moveX;
+
+      // Ensure the bar stays within screen bounds
+      if (newPosition < 0) newPosition = 0;
+      if (newPosition > screenWidth-70) newPosition = screenWidth-70; //don't know why 50
+      setmilkPosition(newPosition);
+      setMilkLevel(Math.round((newPosition)/(screenWidth-70)*100));
+    },
+  });
+  
+  
+  //radio button: serve temp
+  //const [serveTemp, setserveTemp] = useState('hot');
+  const {serve_temperature, setServeTemperature} = useSelection();
+  const {cupValue, setCupValue} = useSelection();
   //checkbox
   const [checked, setChecked] = React.useState(false);
   //foam 
   const navigation = useNavigation();
   const { selection } = useSelection(); // for foam pattern 
   //nutrient
-  const [checkedNutrient, setCheckedNutrient] = useState({
-    item1: false,
-    item2: false,
-    item3: false,
-  });
+  // const [checkedNutrient, setCheckedNutrient] = useState({
+  //   item1: false,
+  //   item2: false,
+  //   item3: false,
+  //   item4: false,
+  // });
+  const {checkedNutrient, setCheckedNutrient} = useSelection();
   const toggleNutrient = (item) => {
     setCheckedNutrient(prevState => ({
         ...prevState,
@@ -130,15 +204,16 @@ function Order(): React.JSX.Element {
 const {coffee_bean_type}= useSelection();//for bean type
 
 
-
-  let price = 35; //base price
+  let price = 29; //base price
   if (cupValue === 'medium') price += 3;
-  else if (cupValue === 'big') price += 6;
+  else if (cupValue === 'large') price += 6;
+  else if (cupValue === 'XL') price += 9;
   if (selection != null) price += 10;
   for (const key in checkedNutrient) {
     if (checkedNutrient[key]) price += 1;
   }
-  if ((coffee_bean_type==='1')||(coffee_bean_type==='3')) price += 5;
+  if (coffee_bean_type==='1') price += 3;
+  else if (coffee_bean_type==='3') price += 7;
  
 
   return (
@@ -150,7 +225,7 @@ const {coffee_bean_type}= useSelection();//for bean type
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Image source={require('./order.jpg')} />
+        {renderImage()}
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -159,54 +234,58 @@ const {coffee_bean_type}= useSelection();//for bean type
             <View style={styles.barContainer}>
               <View style={[styles.bar, { left: barPosition }]} {...panResponder.panHandlers} />
             </View>
-            <Text>Temperature: {temperature} degrees</Text>
+            <Text>Temperature: {brew_temperature} degrees</Text>
             
           </Section>
-          
-          <Section title="Grind size">
+
+          <Section title="Serve temperature">
             <View style={styles.radioContainer}>
             <View style={styles.radioGroup}>
                 <View style={styles.radioButton}>
                     <RadioButton.Android
-                        value="small"
-                        status={grindValue === 'small' ? 
+                        value="hot"
+                        status={serve_temperature === 'hot' ? 
                                 'checked' : 'unchecked'}
-                        onPress={() => setGrindValue('small')}
-                        color="#007BFF"
+                        onPress={() => setServeTemperature('hot')}
+                        color="#795548"
                     />
                     <Text style={styles.radioLabel}>
-                        Small
+                        Hot
                     </Text>
                 </View>
 
                 <View style={styles.radioButton}>
                     <RadioButton.Android
-                        value="medium"
-                        status={grindValue === 'medium' ? 
+                        value="room"
+                        status={serve_temperature === 'room' ? 
+                                'checked' : 'unchecked'}
+                        onPress={() => setServeTemperature('room')}
+                        color="#795548"
+                    />
+                    <Text style={styles.radioLabel}>
+                        Room temp
+                    </Text>
+                </View>
+
+                <View style={styles.radioButton}>
+                    <RadioButton.Android
+                        value="cold"
+                        status={serve_temperature === 'cold' ? 
                                  'checked' : 'unchecked'}
-                        onPress={() => setGrindValue('medium')}
-                        color="#007BFF"
+                        onPress={() => setServeTemperature('cold')}
+                        color="#795548"
                     />
                     <Text style={styles.radioLabel}>
-                        Medium
+                        Cold
                     </Text>
                 </View>
 
-                <View style={styles.radioButton}>
-                    <RadioButton.Android
-                        value="big"
-                        status={grindValue === 'big' ? 
-                                'checked' : 'unchecked'}
-                        onPress={() => setGrindValue('big')}
-                        color="#007BFF"
-                    />
-                    <Text style={styles.radioLabel}>
-                        Big
-                    </Text>
-                </View>
+
             </View>
         </View>
           </Section>
+          
+          
           <Section title="Coffee bean type">
             <BeanDropdown />
 
@@ -215,7 +294,22 @@ const {coffee_bean_type}= useSelection();//for bean type
             <View style={styles.barContainer}>
               <View style={[styles.bar, { left: sugarPosition }]} {...sugarResponder.panHandlers} />
             </View>
-            <Text>Sugar level: {percentage} %</Text>
+            <Text>Sugar level: {sugar_level} %</Text>
+          </Section>
+
+          <Section title="Milk">
+            <View style={styles.barContainer}>
+              <View style={[styles.bar, { left: milkPosition }]} {...milkResponder.panHandlers} />
+            </View>
+            <Text>Milk level: {milk_level} %</Text>
+          </Section>
+          
+
+          <Section title="Caffeine">
+            <View style={styles.barContainer}>
+              <View style={[styles.bar, { left: caffeinePosition }]} {...caffeineResponder.panHandlers} />
+            </View>
+            <Text>Caffeine level: {caffeine_level} %</Text>
           </Section>
           
           <Section title="Nutrient">
@@ -229,9 +323,9 @@ const {coffee_bean_type}= useSelection();//for bean type
               toggleNutrient('item1');
             }
           }
-           color='blue'
+           color='#795548'
           />
-          <Text>V1</Text>
+          <Text>B6</Text>
           </View>
           {/* nutrient2 */}
           <View style={styles.checkboxContainer}>
@@ -241,9 +335,9 @@ const {coffee_bean_type}= useSelection();//for bean type
               toggleNutrient('item2');
             }
           }
-           color='blue'
+           color='#795548'
           />
-          <Text> V2</Text>
+          <Text>B12</Text>
           </View>
           {/* nutrient3 */}
           <View style={styles.checkboxContainer}>
@@ -253,14 +347,27 @@ const {coffee_bean_type}= useSelection();//for bean type
               toggleNutrient('item3');
             }
           }
-           color='blue'
+           color='#795548'
           />
-          <Text> V3</Text>
+          <Text>Iron</Text>
+          </View>
+
+          <View style={styles.checkboxContainer}>
+          <Checkbox
+            status={checkedNutrient.item4 ? 'checked' : 'unchecked'}
+            onPress={() => {
+              toggleNutrient('item4');
+            }
+          }
+           color='#795548'
+          />
+          <Text>Magnesium</Text>
           </View>
 
             </View>
             </View>
             </Section>
+
 
           <Section title="Cup size">
             <View style={styles.radioContainer}>
@@ -271,7 +378,7 @@ const {coffee_bean_type}= useSelection();//for bean type
                         status={cupValue === 'small' ? 
                                 'checked' : 'unchecked'}
                         onPress={() => setCupValue('small')}
-                        color="#007BFF"
+                        color="#795548"
                     />
                     <Text style={styles.radioLabel}>
                         Small
@@ -284,7 +391,7 @@ const {coffee_bean_type}= useSelection();//for bean type
                         status={cupValue === 'medium' ? 
                                  'checked' : 'unchecked'}
                         onPress={() => setCupValue('medium')}
-                        color="#007BFF"
+                        color="#795548"
                     />
                     <Text style={styles.radioLabel}>
                         Medium
@@ -293,14 +400,26 @@ const {coffee_bean_type}= useSelection();//for bean type
 
                 <View style={styles.radioButton}>
                     <RadioButton.Android
-                        value="big"
-                        status={cupValue === 'big' ? 
+                        value="large"
+                        status={cupValue === 'large' ? 
                                 'checked' : 'unchecked'}
-                        onPress={() => setCupValue('big')}
-                        color="#007BFF"
+                        onPress={() => setCupValue('large')}
+                        color="#795548"
                     />
                     <Text style={styles.radioLabel}>
-                        Big
+                        Large
+                    </Text>
+                </View>
+                <View style={styles.radioButton}>
+                    <RadioButton.Android
+                        value="XL"
+                        status={cupValue === 'XL' ? 
+                                'checked' : 'unchecked'}
+                        onPress={() => setCupValue('XL')}
+                        color="#795548"
+                    />
+                    <Text style={styles.radioLabel}>
+                        XL
                     </Text>
                 </View>
 
@@ -308,13 +427,29 @@ const {coffee_bean_type}= useSelection();//for bean type
         </View>
           </Section>
             {/* <Section title="Foam"> */}
-            <View style={styles.checkboxContainer}>
-              <Text style={styles.sectionTitle}>Foam</Text>
+            <View style={styles.foamContainer}>
+              <Text style={[styles.sectionTitle, 
+                {color: isDarkMode ? '#FFEBEE' : '#4E342E' }
+              ]}>Foam
+              </Text>
               <Icon.Button
               onPress={() => navigation.navigate('Foam')}
               name="arrow-right"
-              backgroundColor="transparent"
-              color="#007BFF"
+              backgroundColor="#eee9e8"
+              underlayColor="#eee9e8" // Background color when button is pressed
+              color="#795548"
+              style={{
+                width: 40, // Set width
+                height: 40, // Set height (equal to width for a circle)
+                borderRadius: 20, // Half of the width/height for a perfect circle
+                justifyContent: 'center', // Center the content horizontally
+                alignItems: 'center', // Center the content vertically
+                paddingHorizontal: 0, // Remove extra horizontal padding
+                backgroundColor:"#d7ccc8"
+              }}
+              iconStyle={{
+                marginRight: 0, // Remove default icon margin
+              }}
               />
             </View>
             {/* </Section> */}
@@ -339,7 +474,7 @@ const {coffee_bean_type}= useSelection();//for bean type
         <Button
           title="Purchase"
           onPress={() => Alert.alert('Purchased')}
-          color="#007BFF"
+          color="#795548"
         />
         </View>
       </ScrollView>
@@ -349,8 +484,12 @@ const {coffee_bean_type}= useSelection();//for bean type
 
 const styles = StyleSheet.create({
   sectionContainer: {
-    marginTop: 32,
+    //marginTop: 32,
+    //paddingHorizontal: 24,
+    paddingVertical: 16,
     paddingHorizontal: 24,
+    backgroundColor: '#EEE9E8',
+    
   },
   sectionTitle: {
     fontSize: 24,
@@ -371,7 +510,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#795548',
     borderRadius: 10,
     //padding: 20,
   },
@@ -380,14 +519,14 @@ const styles = StyleSheet.create({
     top: '50%',
     width: 20,
     height: 20,
-    backgroundColor: 'blue',
+    backgroundColor: '#fffde7',
     borderRadius: 10,
     transform: [{ translateY: -10 }], // Center the bar vertically
   },
 //radio button
   radioContainer: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    //backgroundColor: '#FFEBEE',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -397,20 +536,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: 0,
     borderRadius: 8,
-    backgroundColor: 'white',
-    padding: 16,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-        width: 0,
-        height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    //backgroundColor: 'white',
+    padding: 0,
   },
   radioButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    //backgroundColor:'#fffde7'
   },
   radioLabel: {
     marginLeft: 8,
@@ -421,11 +553,19 @@ const styles = StyleSheet.create({
 checkboxContainer: {
   //margin: 30,
   //alignItems: 'center',
-  color: 'green',
+  backgroundColor: '#EEE9E8',
   paddingTop: 0,
   paddingBottom: 0,
   flexDirection: 'row',
   alignItems: 'center',
+},
+
+foamContainer:{
+  flexDirection: 'row',
+  paddingLeft: 25,
+  backgroundColor: '#EEE9E8',
+  alignItems: 'center',
+  gap:250
 },
 
 //button
