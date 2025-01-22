@@ -10,7 +10,7 @@ import {
   Text,
   useColorScheme,
   View,
-  PanResponder,
+  TouchableOpacity,
   Dimensions, Button, Alert, Image
 } from 'react-native';
 import {
@@ -124,7 +124,7 @@ function FoamScreen() {
             status={option === 'upload' ?
               'checked' : 'unchecked'}
             onPress={() => setOption('upload')}
-            color="#007BFF" />
+            color="#795548" />
           <Text style={styles.radioLabel}>
             Upload
           </Text>
@@ -136,7 +136,7 @@ function FoamScreen() {
             status={option === 'prompt' ?
               'checked' : 'unchecked'}
             onPress={() => setOption('prompt')}
-            color="#007BFF" />
+            color="#795548" />
           <Text style={styles.radioLabel}>
             Prompt
           </Text>
@@ -148,7 +148,7 @@ function FoamScreen() {
             status={option === 'preset' ?
               'checked' : 'unchecked'}
             onPress={() => setOption('preset')}
-            color="#007BFF" />
+            color="#795548" />
           <Text style={styles.radioLabel}>
             Preset
           </Text>
@@ -160,29 +160,39 @@ function FoamScreen() {
         {renderComponent()}
         {renderPattern()}
       </View>
-       <Button
-                title="Clear"
-                onPress={() => setSelection(null)}
-                color="#007BFF"
-              />
+      <TouchableOpacity style={styles.button}
+onPress={() => {
+  setSelection(null);
+}}>
+<Text style={styles.buttonText}>Clear </Text>
+</TouchableOpacity> 
       </ScrollView>
       </SafeAreaView>
       
   );
 }
 
-const ComponentA = () => <Button title="Gallery" onPress={async () => {
+const ComponentA = () => <TouchableOpacity style={styles.button}
+onPress={async () => {
   uploadFileOnPressHandler();
-}} />;
+}}>
+<Text style={styles.buttonText}>Upload from device</Text>
+</TouchableOpacity>; 
+
+
 const ComponentB = () => {
   const [text, onChangeText] = React.useState('');
-  return (<View style={{ width: '85%' }}><TextInput
+  return (<View style={{ width: '85%',
+    alignContent: 'center',
+   }}><TextInput
     style={styles.input}
     onChangeText={onChangeText}
     value={text}
-    placeholder="What should the foam be?" /><Button
-      title="Generate"
-      color="#007BFF" /></View>
+    placeholder="What should the foam be?" />
+    <TouchableOpacity style={styles.button}>
+<Text style={styles.buttonText}>Generate </Text>
+</TouchableOpacity> 
+       </View>
       
       )
 
@@ -196,6 +206,7 @@ return (
 
 const styles = StyleSheet.create({
   radioContainer: {
+    margin: 10,
     flex: 1,
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
@@ -207,16 +218,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: 0,
     borderRadius: 8,
-    backgroundColor: 'white',
-    padding: 16,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-        width: 0,
-        height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    //backgroundColor: 'white',
+    //padding: 16,
+    
   },
   radioButton: {
     flexDirection: 'row',
@@ -233,6 +237,21 @@ input: {
   margin: 12,
   borderWidth: 1,
   padding: 10,
+},
+button: {
+  paddingVertical: 12,
+  paddingHorizontal: 20,
+  margin: 20,
+  borderWidth: 2,
+  borderColor: '#4e342e',
+  borderRadius: 25, // Makes the button rounded
+  //backgroundColor: '#007BFF',
+},
+buttonText: {
+  color: '#795548',
+  fontSize: 16,
+  fontWeight: 'bold',
+  textAlign: 'center',
 },
 });
 

@@ -29,9 +29,9 @@ import { useSelection } from './SelectionContext';
 
     return (
       <View style={styles.dropdownContainer}>
-        {renderLabel()}
+
         <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          style={[styles.dropdown, isFocus && { borderColor: 'grey' }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
 
   dropdownContainer: {
-    backgroundColor: 'white',
+    //backgroundColor: 'white',
     padding: 16,
     width: '100%',
     height: 100,

@@ -17,7 +17,7 @@ import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 function HomeScreen() {
     const navigation = useNavigation();
-    const image = require('./bdg.jpg');
+    const image = require('./BrewUp.png');
     const {setSelection, setCupValue, setBean, setCheckedNutrient, 
       setBrewTemperature, setServeTemperature, setSugarLevel, setCaffeineLevel} = useSelection();
     const makeOrder=(coffee_bean:string|null, foam_pattern:string|null, cup_size:string|null, nutrient:{[key: string]: boolean })=>{
