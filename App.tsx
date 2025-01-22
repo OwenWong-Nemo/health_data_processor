@@ -13,10 +13,12 @@ import FoamScreen from './Foam';
 import PredictScreen from './Predict';
 import { useSelection, SelectionProvider  } from './SelectionContext';
 import axios from 'axios';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 function HomeScreen() {
     const navigation = useNavigation();
-    const {setSelection, setCupValue, setBean, setCheckedNutrient, setBrewTemperature, setSugarLevel} = useSelection();
+    const {setSelection, setCupValue, setBean, setCheckedNutrient, 
+      setBrewTemperature, setServeTemperature, setSugarLevel, setCaffeineLevel} = useSelection();
     const makeOrder=(coffee_bean:string|null, foam_pattern:string|null, cup_size:string|null, nutrient:{[key: string]: boolean })=>{
         setCupValue(cup_size);
         setBean(coffee_bean);
@@ -27,7 +29,7 @@ function HomeScreen() {
             });
           }
     };
-    // const [message, setMessage] = useState('');
+     const {imgSrc, setImgSrc} = useSelection();
 
     // axios.get('http://10.0.2.2:8000/api/getOrder/').then(response => { //not localhost
     // setMessage(response.data.message);}).catch(error => {
@@ -37,15 +39,23 @@ function HomeScreen() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {/* <Text>{message}</Text> */}
-      <Text>Home Screen</Text>
       <Button onPress={() => {
-        navigation.navigate('Predict')}}>
+        //navigation.navigate('Predict')
+        makeOrder(null, null, null, {'item1': true, 'item2': true, 'item3': true, 'item4': true});
+        setImgSrc('mocha');
+        setServeTemperature('room');
+        setSugarLevel(0);
+        setCaffeineLevel(25);
+        navigation.navigate('Order')
+        }}>
         Get Prediction
       </Button>
       <Button onPress={() => {
         makeOrder(null, null, null, {'item1': false, 'item2': false, 'item3': false, 'item4': false});
         setBrewTemperature(80);
         setSugarLevel(0);
+        setImgSrc('order');
+        setServeTemperature('hot');
         navigation.navigate('Order')}}>
         Place order
       </Button>

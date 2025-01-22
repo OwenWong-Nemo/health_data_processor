@@ -42,6 +42,7 @@ type SectionProps = PropsWithChildren<{
 
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+
   return (
     <View style={[styles.sectionContainer, 
       { backgroundColor: isDarkMode ? '#5D4037' : '#EEE9E8' }
@@ -77,12 +78,37 @@ function Order(): React.JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
   //image
-  // Import the local image
-  const imageSource = require('./order.png');
+  
+  
+  const renderImage = () => {
+    const { imgSrc } = useSelection();
+    if (imgSrc==="mocha"){
+      const imageSource = require('./mocha.png');
 
-  // Get the local image dimensions
-  const image = Image.resolveAssetSource(imageSource);
-  const aspectRatio = image.width / image.height;
+      // Get the local image dimensions
+      const image = Image.resolveAssetSource(imageSource);
+      const aspectRatio = image.width / image.height;
+      return (
+        <Image source={require('./mocha.png')}
+        resizeMode="contain"
+        style={{ width: screenWidth, // Fit the width of the screen
+          height: screenWidth / aspectRatio }}  />)
+    }
+    else{
+      const imageSource = require('./order.png');
+
+      // Get the local image dimensions
+      const image = Image.resolveAssetSource(imageSource);
+      const aspectRatio = image.width / image.height;
+      return (
+        <Image source={require('./order.png')}
+        resizeMode="contain"
+        style={{ width: screenWidth, // Fit the width of the screen
+          height: screenWidth / aspectRatio }}  />)
+    }
+  }
+
+ 
 
   //slidable : brew temp
   const {brew_temperature, setBrewTemperature} = useSelection();
@@ -153,7 +179,8 @@ function Order(): React.JSX.Element {
   
   
   //radio button: serve temp
-  const [serveTemp, setserveTemp] = useState('hot');
+  //const [serveTemp, setserveTemp] = useState('hot');
+  const {serve_temperature, setServeTemperature} = useSelection();
   const {cupValue, setCupValue} = useSelection();
   //checkbox
   const [checked, setChecked] = React.useState(false);
@@ -198,10 +225,7 @@ const {coffee_bean_type}= useSelection();//for bean type
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Image source={require('./order.png')}
-        resizeMode="contain"
-        style={{ width: screenWidth, // Fit the width of the screen
-          height: screenWidth / aspectRatio }}  />
+        {renderImage()}
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -220,9 +244,9 @@ const {coffee_bean_type}= useSelection();//for bean type
                 <View style={styles.radioButton}>
                     <RadioButton.Android
                         value="hot"
-                        status={serveTemp === 'hot' ? 
+                        status={serve_temperature === 'hot' ? 
                                 'checked' : 'unchecked'}
-                        onPress={() => setserveTemp('hot')}
+                        onPress={() => setServeTemperature('hot')}
                         color="#795548"
                     />
                     <Text style={styles.radioLabel}>
@@ -233,9 +257,9 @@ const {coffee_bean_type}= useSelection();//for bean type
                 <View style={styles.radioButton}>
                     <RadioButton.Android
                         value="room"
-                        status={serveTemp === 'room' ? 
+                        status={serve_temperature === 'room' ? 
                                 'checked' : 'unchecked'}
-                        onPress={() => setserveTemp('room')}
+                        onPress={() => setServeTemperature('room')}
                         color="#795548"
                     />
                     <Text style={styles.radioLabel}>
@@ -246,9 +270,9 @@ const {coffee_bean_type}= useSelection();//for bean type
                 <View style={styles.radioButton}>
                     <RadioButton.Android
                         value="cold"
-                        status={serveTemp === 'cold' ? 
+                        status={serve_temperature === 'cold' ? 
                                  'checked' : 'unchecked'}
-                        onPress={() => setserveTemp('cold')}
+                        onPress={() => setServeTemperature('cold')}
                         color="#795548"
                     />
                     <Text style={styles.radioLabel}>
@@ -301,7 +325,7 @@ const {coffee_bean_type}= useSelection();//for bean type
           }
            color='#795548'
           />
-          <Text>V1</Text>
+          <Text>B6</Text>
           </View>
           {/* nutrient2 */}
           <View style={styles.checkboxContainer}>
@@ -313,7 +337,7 @@ const {coffee_bean_type}= useSelection();//for bean type
           }
            color='#795548'
           />
-          <Text> V2</Text>
+          <Text>B12</Text>
           </View>
           {/* nutrient3 */}
           <View style={styles.checkboxContainer}>
@@ -325,7 +349,7 @@ const {coffee_bean_type}= useSelection();//for bean type
           }
            color='#795548'
           />
-          <Text> V3</Text>
+          <Text>Iron</Text>
           </View>
 
           <View style={styles.checkboxContainer}>
@@ -337,7 +361,7 @@ const {coffee_bean_type}= useSelection();//for bean type
           }
            color='#795548'
           />
-          <Text>V4</Text>
+          <Text>Magnesium</Text>
           </View>
 
             </View>
