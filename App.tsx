@@ -1,7 +1,7 @@
 // In App.js in a new project
 
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet,ImageBackground } from 'react-native';
 import {
   createStaticNavigation,
   useNavigation,
@@ -17,6 +17,7 @@ import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 function HomeScreen() {
     const navigation = useNavigation();
+    const image = require('./bdg.jpg');
     const {setSelection, setCupValue, setBean, setCheckedNutrient, 
       setBrewTemperature, setServeTemperature, setSugarLevel, setCaffeineLevel} = useSelection();
     const makeOrder=(coffee_bean:string|null, foam_pattern:string|null, cup_size:string|null, nutrient:{[key: string]: boolean })=>{
@@ -37,9 +38,11 @@ function HomeScreen() {
 
 
   return (
+    <ImageBackground source={image} style={{width: '100%', height: '100%'}}>
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {/* <Text>{message}</Text> */}
-      <Button onPress={() => {
+      <Button style={styles.button}
+      onPress={() => {
         //navigation.navigate('Predict')
         makeOrder(null, null, null, {'item1': true, 'item2': true, 'item3': true, 'item4': true});
         setImgSrc('mocha');
@@ -48,45 +51,67 @@ function HomeScreen() {
         setCaffeineLevel(25);
         navigation.navigate('Order')
         }}>
-        Get Prediction
+          <Text style={styles.buttonText}> Get Prediction</Text>
       </Button>
-      <Button onPress={() => {
+      <Button style={styles.button} 
+      onPress={() => {
         makeOrder(null, null, null, {'item1': false, 'item2': false, 'item3': false, 'item4': false});
         setBrewTemperature(80);
         setSugarLevel(0);
         setImgSrc('order');
         setServeTemperature('hot');
         navigation.navigate('Order')}}>
-        Place order
+        <Text style={styles.buttonText}> Place Order </Text>
       </Button>
-      <Text>Quick Options</Text>
-      <Button onPress={() => {
+      {/* <Text style={{ color: 'white' }}>Quick Options</Text> */}
+      <Button style={styles.button} 
+      onPress={() => {
         makeOrder('2', null, 'small', {'item1': false, 'item2': false, 'item3': false, 'item4': false});
         navigation.navigate('Order');
       }}>
-        Order1
+        <Text style={styles.buttonText}> Option 1 </Text>
       </Button>
-      <Button onPress={() => {
+      <Button style={styles.button}
+      onPress={() => {
         makeOrder('1', null, 'medium', {'item1': true, 'item2': true, 'item3': true, 'item4': true});
         navigation.navigate('Order');
       }}>
-        Order2
+       <Text style={styles.buttonText}> Option 2 </Text>
       </Button>
-      <Button onPress={() => {
+      <Button style={styles.button}
+      onPress={() => {
         makeOrder('2', '2', 'large', {'item1': false, 'item2': false, 'item3': false, 'item4': false});
         navigation.navigate('Order');
       }}>
-        Order3
+        <Text style={styles.buttonText}> Option 3 </Text>
       </Button>
-      <Button onPress={() => {
+      <Button style={styles.button}
+       onPress={() => {
         makeOrder('3', '2', 'XL', {'item1': true, 'item2': true, 'item3': true, 'item4': true});
         navigation.navigate('Order');
       }}>
-        Order4
+       <Text style={styles.buttonText}> Option 4 </Text>
       </Button>
     </View>
+    </ImageBackground>
   );
 }
+
+const styles= StyleSheet.create({ button: {
+  backgroundColor: '#8B4513', // Brown color
+  paddingVertical: 12,
+  paddingHorizontal: 24,
+  borderRadius: 8,
+  marginVertical: 10, 
+},
+buttonText: {
+  color: '#ffffff', // White text
+  fontSize: 16,
+  fontWeight: '600',
+  textAlign: 'center',
+},
+
+})
 
 const RootStack = createNativeStackNavigator({
     initialRouteName: 'Home',
