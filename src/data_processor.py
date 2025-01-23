@@ -187,7 +187,7 @@ def generateRecommendation():
         "additive": additive
     }
 
-    print(f'{Fore.MAGENTA}Final Recommendation:')
+    print(f'{Fore.MAGENTA}Recommendation:')
     print(f'{Fore.MAGENTA}{json.dumps(coffee, indent=4)}')
 
     return coffee
