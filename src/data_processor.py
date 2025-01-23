@@ -12,6 +12,10 @@ from init import filterData # Optional
 from datetime import datetime
 from helper_fn import parseTimeSensitiveData, parseDiscreteData, evaluateAppleExerciseTime, evaluateBodyMass, evaluateRestingHeartRate, evaluateSleepAnalysis, evaluateStepCount, getMoodDesc, getWeatherData, getWeatherDataSummary, getCoffeeType, setTemperature, setSweetness, setCaffeine, checkSymptoms, setAdditive
 import json
+from colorama import Fore, Style, init
+
+# Initialize colorama
+init(autoreset=True)
 
 """
 Constants/ hardcode variable
@@ -128,22 +132,21 @@ def getMetrics():
 def generateRecommendation():
     # Preparation
     metrics = getMetrics()
-    # <br>
     print('\n')
     mood_desc = getMoodDesc(estimateMood(metrics))
-    coffeeType =  getCoffeeType(mood_desc)
+    coffeeType = getCoffeeType(mood_desc)
     weather_data_summary = getWeatherDataSummary(getWeatherData(curr_loc))
 
-    # debug 
-    # print(getWeatherData(curr_loc))
-    print(f'Current location: {curr_loc} \nWeather Data Summary: {weather_data_summary}\n') 
+    # Debug
+    print(f'{Fore.CYAN}Current location: {curr_loc}')
+    print(f'{Fore.CYAN}Weather Data Summary: {json.dumps(weather_data_summary, indent=4)}\n')
 
     curr_time = datetime.now().time()
-    
+
     # For debug
+    print(f'{Fore.GREEN}Available metrics:')
     for metric in metrics:
-        print("Available metrics: ")
-        print(f'json.dumps(metric, indent=4)\n')
+        print(f'{Fore.GREEN}{json.dumps(metric, indent=4)}\n')
 
     # Init, accessing metric data
     exerciseData = bodyMassData = restingHeartRateData = sleepData = stepCountData = None
@@ -163,18 +166,18 @@ def generateRecommendation():
     Customising different properties
     """
     # Customise temperature
-    temperature = setTemperature(weather_data_summary) 
+    temperature = setTemperature(weather_data_summary)
     # Customise sweetness level
-    sweetness = setSweetness(mood_desc, bodyMassData, sleepData, stepCountData) 
+    sweetness = setSweetness(mood_desc, bodyMassData, sleepData, stepCountData)
     # Customise caffeine level
     caffeine = setCaffeine(curr_time, sleepData)
     # Examine symptoms
     symptoms = checkSymptoms(exerciseData, bodyMassData, restingHeartRateData, sleepData, stepCountData)
     additive = setAdditive(symptoms)
 
-    # Debug 
-    print(f'Detected symptom(s): {symptoms}\n')
-    print(f'Recommend nutrient(s): {additive}\n')
+    # Debug
+    print(f'{Fore.YELLOW}\nDetected symptom(s): {json.dumps(symptoms, indent=4)}\n')
+    print(f'{Fore.YELLOW}Recommend nutrient(s): {json.dumps(additive, indent=4)}\n')
 
     coffee = {
         "coffeeType": coffeeType,
@@ -183,6 +186,9 @@ def generateRecommendation():
         "caffeine": caffeine,
         "additive": additive
     }
+
+    print(f'{Fore.MAGENTA}Final Recommendation:')
+    print(f'{Fore.MAGENTA}{json.dumps(coffee, indent=4)}')
 
     return coffee
 
@@ -214,4 +220,3 @@ def estimateMood(data):
 Test functionality
 """
 recommendation = generateRecommendation()
-print(json.dumps(recommendation, indent=4))
